@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-
 /**
  * Created by aaaa on 15.02.2015.
  */
@@ -14,35 +13,20 @@ public class GameScreen implements Screen {
     OrthographicCamera cam;
     ShapeRenderer shapeRenderer;
     World mainWorld;
-    Body first;
     Body groundBody;
-
+    Player player;
+    Box box;
     public void init()
     {
         cam = new OrthographicCamera();
-        cam.setToOrtho(false , 1920, 1080);
+        cam.setToOrtho(true , 1920, 1080);
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(cam.combined);
-
         mainWorld = new World(new Vector2(0, 10), true);
 
-        BodyDef firstDef = new BodyDef();
-        firstDef.type = BodyDef.BodyType.DynamicBody;
-        firstDef.position.set(100,300);
-
-        first = mainWorld.createBody(firstDef);
-        CircleShape circle = new CircleShape();
-        circle.setRadius(20.0f);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 15.5f;
-        fixtureDef.friction = 15.4f;
-
-        Fixture fixture = first.createFixture(fixtureDef);
-        circle.dispose();
-
         CreateStatic();
+        player = new Player( 500.0f, 500.0f, 34.0f, mainWorld);
+        box = new Box(700.0f, 500.0f, 100.0f, 30.0f, 30.0f, mainWorld);
     }
     public void draw()
     {
@@ -53,8 +37,10 @@ public class GameScreen implements Screen {
         shapeRenderer.setColor(1, 1, 0, 1);
         shapeRenderer.line(0, 0, 1900, 100);
         shapeRenderer.rect(groundBody.getPosition().x, groundBody.getPosition().y - 10.0f, 1000.0f, 20f);
-        shapeRenderer.circle(first.getPosition().x, first.getPosition().y, 20.0f);
         shapeRenderer.end();
+        player.draw(shapeRenderer);
+        box.draw(shapeRenderer);
+
     }
     public void update(float dt)
     {
@@ -63,10 +49,10 @@ public class GameScreen implements Screen {
     }
     public void handleInput()
     {
-        if(InputHandler.isKeyDown(InputHandler.W))first.applyLinearImpulse(0.0f, 100000.0f, 0.0f,0.0f,true);
-        if(InputHandler.isKeyDown(InputHandler.S))first.applyLinearImpulse(0.0f, -100000.0f, 0.0f,0.0f,true);
-        if(InputHandler.isKeyDown(InputHandler.D))first.applyLinearImpulse(100000.0f, 0.0f, 0.0f,0.0f,true);
-        if(InputHandler.isKeyDown(InputHandler.A))first.applyLinearImpulse(-100000.0f, 0.0f, 0.0f,0.0f,true);
+        if(InputHandler.isKeyDown(InputHandler.W))player.getBody().applyLinearImpulse(0.0f, -100000.0f, 0.0f, 0.0f, true);
+        if(InputHandler.isKeyDown(InputHandler.S))player.getBody().applyLinearImpulse(0.0f, 100000.0f, 0.0f, 0.0f, true);
+        if(InputHandler.isKeyDown(InputHandler.D))player.getBody().applyLinearImpulse(100000.0f, 0.0f, 0.0f, 0.0f, true);
+        if(InputHandler.isKeyDown(InputHandler.A))player.getBody().applyLinearImpulse(-100000.0f, 0.0f, 0.0f, 0.0f, true);
     }
 
     private void CreateStatic()
