@@ -1,16 +1,21 @@
 package com.ghstsch.snakesurvival;
 
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 /**
- * Created by aaaa on 15.02.2015.
+ * Created by aaaa on 17.02.2015.
  */
-public class Player extends PhysicalObject {
-    Player(float x, float y, float angle, World world) {
+public class SnakeSegment extends PhysicalObject{
+    SnakeSegment(float x, float y, float angle, World world) {
         super(x, y, angle, world);
+    }
+    static final Vector2 shape[] = new Vector2[3];
+    static {
+        shape[0].set(-7.0f, 0.0f);
+        shape[1].set(0.0f, 7.0f);
+        shape[2].set(7.0f, 0.0f);
     }
     public void draw(ShapeRenderer shapeRenderer) {
 
@@ -30,16 +35,17 @@ public class Player extends PhysicalObject {
         firstDef.position.set(x, y);
 
         body = world.createBody(firstDef);
-        CircleShape circle = new CircleShape();
-        circle.setRadius(30.0f);
+        PolygonShape shape = new PolygonShape();
+
+        shape.set(SnakeSegment.shape);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
+        fixtureDef.shape = shape;
         fixtureDef.density = 0.5f;
         fixtureDef.friction = 0.4f;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        circle.dispose();
+        shape.dispose();
         body.setTransform(x, y, angle);
     }
 }

@@ -32,7 +32,8 @@ public class GameScreen implements Screen {
     {
         cam.update();
         Gdx.gl.glClearColor(0.2f, 0.3f, 0.4f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+       // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(1, 1, 0, 1);
         shapeRenderer.line(0, 0, 1900, 100);
