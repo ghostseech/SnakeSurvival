@@ -1,8 +1,6 @@
 package com.ghstsch.snakesurvival;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -19,11 +17,11 @@ public class Box extends PhysicalObject {
         this.sizeY = sizeY;
         pastCreateShape(x, y, angle);
     }
-    public void draw(ShapeRenderer shapeRenderer) {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+    public void draw(SpriteBatch batch) {
+       /* shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(1, 1, 0, 1);
         shapeRenderer.rect(body.getPosition().x-sizeX/2, body.getPosition().y - sizeY/2 , sizeX/2 , sizeY/2, sizeX, sizeY, 1.0f, 1.0f, body.getAngle() / 0.017f);
-        shapeRenderer.end();
+        shapeRenderer.end();*/
 
     }
     public void createShape(float x, float y, float angle) {
