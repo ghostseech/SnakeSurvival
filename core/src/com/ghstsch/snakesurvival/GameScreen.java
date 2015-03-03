@@ -22,10 +22,12 @@ public class GameScreen implements Screen {
     Box box;
     Texture boxtexture;
     Box2DDebugRenderer b2render;
-    BitmapFont font1;
-    public void init()
+    BitmapFont font;
+    ScreenManager screenManager;
+    public void init(ScreenManager screenManager, BitmapFont font)
     {
-        font1 = new BitmapFont(Gdx.files.internal("fonts/font_6.fnt"), Gdx.files.internal("fonts/font_6_0.png"), true);
+        this.screenManager = screenManager;
+        this.font = font;
         //b2render = new Box2DDebugRenderer(true, true, true, true, true, true);
         b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
         cam = new OrthographicCamera();
@@ -60,11 +62,11 @@ public class GameScreen implements Screen {
         box.draw(shapeRenderer);
         b2render.render(mainWorld, cam.combined);
         shapeRenderer.begin();
-        font1.setColor(0.0f, 1.0f, 1.0f,1.0f);
-        font1.setScale(0.5f);
-        font1.draw(shapeRenderer, "YOBA.^:", 100.0f, 100.0f);
-        font1.setScale(1.0f);
-        font1.draw(shapeRenderer, "абвБВгд{}.^:", 300.0f, 300.0f);
+        font.setColor(0.0f, 1.0f, 1.0f,1.0f);
+        font.setScale(0.5f);
+        font.draw(shapeRenderer, "YOBA.^:", 100.0f, 100.0f);
+        font.setScale(1.0f);
+        font.draw(shapeRenderer, "абвБВгд{}.^:", 300.0f, 300.0f);
         shapeRenderer.end();
     }
     public void update(float dt)
