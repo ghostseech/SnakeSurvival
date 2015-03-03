@@ -12,26 +12,21 @@ import java.util.LinkedList;
  * Created by aaaa on 15.02.2015.
  */
 public class Player implements GameObject {
-    static final float segmentSize = 50.0f;
 
-    static Texture segmentTexture;
-    static {
-        segmentTexture = new Texture("textures/snake_segment.png");
-    }
+    static final float segmentSize = 50.0f;
+    static Texture segmentTexture = new Texture("textures/snake_segment.png");;
 
     LinkedList<SnakeSegment> segmentList;
-    float x;
-    float y;
     World world;
-    Player(float x, float y, World world) {
-        this.x = x;
-        this.y = y;
+
+    Player(float x, float y, float angle, World world) {
         this.world = world;
 
         segmentList = new LinkedList<SnakeSegment>();
+        //snake always have at least 3 segments
         segmentList.add(new SnakeSegment(x, y, 0.0f, world, segmentTexture));
-        segmentList.get(0).body.setTransform(x, y, 45.0f * 0.017f);
-        addSegments(12);
+        segmentList.get(0).body.setTransform(x, y, angle * 0.017f);
+        addSegments(9);
     }
 
     public void draw(SpriteBatch batch) {
@@ -44,24 +39,31 @@ public class Player implements GameObject {
     }
     void addSegments(int count) {
         for(int i = 0; i < count; i++) {
+            //calculate rotation and position of new segment
             float newrotate = segmentList.getLast().getAngle();
             float newx = segmentList.getLast().getPosition().x + MathUtils.cos(newrotate + 0.5f * 3.1417f) * segmentSize;
             float newy = segmentList.getLast().getPosition().y + MathUtils.sin(newrotate + 0.5f * 3.1417f) * segmentSize;
 
             segmentList.addLast(new SnakeSegment(newx, newy, newrotate, world, segmentTexture));
-            segmentList.getLast().joinToNext(segmentList.get(segmentList.size()-1 - 1));
-            //segmentList.get(segmentList.size() - 1 - 1).joinToNext(segmentList.getLast());
+            //join new segment with next
+            segmentList.getLast().joinToNext(segmentList.get((segmentList.size()-1) - 1));
         }
     }
     void removeSegments(int count) {
 
     }
     SnakeSegment getSegment(int id) {
-        return segmentList.get(id);
+        if(id >= segmentList.size()) return segmentList.getLast();
+        else                         return segmentList.get(id);
     }
+    SnakeSegment getHead() {
+        return segmentList.getFirst();
+    }
+    //return position of head
     public Vector2 getPosition() {
         return segmentList.get(0).getPosition();
     }
+    //return rotation of head
     public float getAngle() {
         return segmentList.get(0).getAngle();
     }

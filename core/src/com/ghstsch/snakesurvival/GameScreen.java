@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -21,9 +22,10 @@ public class GameScreen implements Screen {
     Box box;
     Texture boxtexture;
     Box2DDebugRenderer b2render;
-
+    BitmapFont font1;
     public void init()
     {
+        font1 = new BitmapFont(Gdx.files.internal("fonts/font_6.fnt"), Gdx.files.internal("fonts/font_6_0.png"), true);
         //b2render = new Box2DDebugRenderer(true, true, true, true, true, true);
         b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
         cam = new OrthographicCamera();
@@ -34,14 +36,14 @@ public class GameScreen implements Screen {
         mainWorld = new World(new Vector2(0, 0), true);
 
         CreateStatic();
-        player = new Player( 500.0f, 500.0f, mainWorld);
+        player = new Player( 500.0f, 500.0f, 30.0f, mainWorld);
         box = new Box(700.0f, 500.0f, 100.0f, 30.0f, 30.0f, mainWorld);
         boxtexture = new Texture(Gdx.files.internal("textures/box1.png"));
     }
     public void draw()
     {
         cam.update();
-        Gdx.gl.glClearColor(0.2f, 0.3f, 0.4f, 1);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
        /* shapeRenderer.begin(PolygonSpriteBatch.ShapeType.Line);
@@ -49,17 +51,27 @@ public class GameScreen implements Screen {
         shapeRenderer.line(0, 0, 1900, 100);
         shapeRenderer.rect(groundBody.getPosition().x, groundBody.getPosition().y - 10.0f, 1000.0f, 20f);
         shapeRenderer.end();*/
+
         shapeRenderer.begin();
+
         shapeRenderer.draw(boxtexture, groundBody.getPosition().x, groundBody.getPosition().y - 10.0f, 1000.0f, 20.0f);
         shapeRenderer.end();
         //player.draw(shapeRenderer);
         box.draw(shapeRenderer);
         b2render.render(mainWorld, cam.combined);
+        shapeRenderer.begin();
+        font1.setColor(0.0f, 1.0f, 1.0f,1.0f);
+        font1.setScale(0.5f);
+        font1.draw(shapeRenderer, "YOBA.^:", 100.0f, 100.0f);
+        font1.setScale(1.0f);
+        font1.draw(shapeRenderer, "абвБВгд{}.^:", 300.0f, 300.0f);
+        shapeRenderer.end();
     }
     public void update(float dt)
     {
         handleInput();
-        mainWorld.step(Gdx.graphics.getDeltaTime(), 6, 2);
+        doPhysicsStep(Gdx.graphics.getDeltaTime());
+        //mainWorld.step(6f, 6, 2);
     }
     public void handleInput()
     {
@@ -72,7 +84,18 @@ public class GameScreen implements Screen {
         if(InputHandler.isKeyDown(InputHandler.D))player.getSegment(0).getBody().applyForce(100000.0f * MathUtils.cos(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, 0.0f, true);
         if(InputHandler.isKeyDown(InputHandler.A))player.getSegment(0).getBody().applyForce(-100000.0f * MathUtils.cos(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, 0.0f, true);*/
     }
+    private float accumulator = 0;
 
+    private void doPhysicsStep(float deltaTime) {
+        // fixed time step
+        // max frame time to avoid spiral of death (on slow devices)
+        float frameTime = Math.min(deltaTime, 0.25f);
+        accumulator += frameTime;
+        while (accumulator >= 1/60.0f) {
+            mainWorld.step(1/60.0f, 6, 2);
+            accumulator -= 1/60.0f;
+        }
+    }
     private void CreateStatic()
     {
         BodyDef groundBodyDef =new BodyDef();
@@ -93,4 +116,5 @@ public class GameScreen implements Screen {
         groundBox.dispose();
         groundBody.setTransform(40.0f,200.0f,0.0f);
     }
+
 }
