@@ -72,15 +72,16 @@ public class GameScreen implements Screen {
     public void update(float dt)
     {
         handleInput();
+        player.update(dt);
         doPhysicsStep(Gdx.graphics.getDeltaTime());
         //mainWorld.step(6f, 6, 2);
     }
     public void handleInput()
     {
-        if(InputHandler.isKeyDown(InputHandler.W))player.getSegment(0).getBody().applyLinearImpulse(-10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), -10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
-        if(InputHandler.isKeyDown(InputHandler.S))player.getSegment(0).getBody().applyLinearImpulse(10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), 10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
-        if(InputHandler.isKeyDown(InputHandler.D))player.getSegment(0).getBody().applyLinearImpulse(2000.0f * MathUtils.cos(player.getAngle()), 2000.0f * MathUtils.sin(player.getAngle()), player.getPosition().x, player.getPosition().y, true);
-        if(InputHandler.isKeyDown(InputHandler.A))player.getSegment(0).getBody().applyLinearImpulse(-2000.0f * MathUtils.cos(player.getAngle()), -2000.0f * MathUtils.sin(player.getAngle()), player.getPosition().x, player.getPosition().y, true);
+       // if(InputHandler.isKeyDown(InputHandler.W))player.getSegment(0).getBody().applyLinearImpulse(-10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), -10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
+        //if(InputHandler.isKeyDown(InputHandler.S))player.getSegment(0).getBody().applyLinearImpulse(10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), 10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
+        if(InputHandler.isKeyDown(InputHandler.D))player.turnRight();
+        if(InputHandler.isKeyDown(InputHandler.A))player.turnLeft();
         /*if(InputHandler.isKeyDown(InputHandler.W))player.getSegment(0).getBody().applyForce(0.0f, -100000.0f * MathUtils.sin(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, false);
         if(InputHandler.isKeyDown(InputHandler.S))player.getSegment(0).getBody().applyForce(0.0f, 100000.0f * MathUtils.sin(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, false);
         if(InputHandler.isKeyDown(InputHandler.D))player.getSegment(0).getBody().applyForce(100000.0f * MathUtils.cos(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, 0.0f, true);

@@ -18,7 +18,10 @@ public class Player implements GameObject {
 
     LinkedList<SnakeSegment> segmentList;
     World world;
-
+    boolean left;
+    boolean right;
+    float snakeSpeed;
+    float rotationSpeed;
     Player(float x, float y, float angle, World world) {
         this.world = world;
 
@@ -27,8 +30,22 @@ public class Player implements GameObject {
         segmentList.add(new SnakeSegment(x, y, 0.0f, world, segmentTexture));
         segmentList.get(0).body.setTransform(x, y, angle * 0.017f);
         addSegments(9);
+        snakeSpeed = 40000.0f;
+        rotationSpeed = 8000.0f;
+        right = false;
+        left = false;
     }
+    public void moveForward() {
 
+    }
+    public void turnRight() {
+        right = true;
+        left = false;
+    }
+    public void turnLeft() {
+        right = false;
+        left = true;
+    }
     public void draw(SpriteBatch batch) {
         for(int i = 0; i < segmentList.size(); i++) {
             segmentList.get(i).draw(batch);
@@ -36,6 +53,22 @@ public class Player implements GameObject {
     }
     public void update(float dt) {
 
+        float impulseDirX = -snakeSpeed * MathUtils.cos(getAngle() + 0.5f * 3.1417f);
+        float impulseDirY = -snakeSpeed * MathUtils.sin(getAngle() + 0.5f * 3.1417f);
+        getHead().getBody().applyLinearImpulse(impulseDirX, impulseDirY, getPosition().x, getPosition().y, true);
+        if(right) {
+            float rotationDirX = rotationSpeed * MathUtils.cos(getAngle());
+            float rotationDirY = rotationSpeed * MathUtils.sin(getAngle());
+            getHead().getBody().applyLinearImpulse(rotationDirX, rotationDirY, getPosition().x, getPosition().y, true);
+        }
+        else if(left) {
+            float rotationDirX = -rotationSpeed * MathUtils.cos(getAngle());
+            float rotationDirY = -rotationSpeed * MathUtils.sin(getAngle());
+            getHead().getBody().applyLinearImpulse(rotationDirX, rotationDirY, getPosition().x, getPosition().y, true);
+        }
+
+        right = false;
+        left = false;
     }
     void addSegments(int count) {
         for(int i = 0; i < count; i++) {
@@ -57,7 +90,7 @@ public class Player implements GameObject {
         else                         return segmentList.get(id);
     }
     SnakeSegment getHead() {
-        return segmentList.getFirst();
+        return segmentList.get(0);
     }
     //return position of head
     public Vector2 getPosition() {

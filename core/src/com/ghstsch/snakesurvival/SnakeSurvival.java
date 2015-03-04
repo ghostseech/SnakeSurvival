@@ -10,7 +10,7 @@ public class SnakeSurvival extends ApplicationAdapter {
 	ScreenManager screenManager;
 	@Override
 	public void create () {
-		font = new BitmapFont(Gdx.files.internal("fonts/font_6.fnt"), Gdx.files.internal("fonts/font_6_0.png"), true);
+		font = new BitmapFont(Gdx.files.internal("fonts/font_8.fnt"), Gdx.files.internal("fonts/font_8_0.png"), true);
 		screenManager = new ScreenManager();
 		screenManager.setScreen(new MenuScreen(), font);
 	}

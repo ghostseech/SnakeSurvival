@@ -18,10 +18,13 @@ public class MenuScreen implements Screen {
     BitmapFont font;
     SpriteBatch batch;
     Vector<UiElement> startScreen;
+    Vector<UiElement> worldSelectionScreen;
+    Vector<UiElement> currentScreen;
     ScreenManager screenManager;
-    int currentScreen;
-
+    Vector<UiElement> nextScreen;
+    float timer;
     public void init(ScreenManager screenManager, BitmapFont font) {
+        timer = -100.0f;
         this.screenManager = screenManager;
         this.font = font;
         batch = new SpriteBatch();
@@ -35,6 +38,12 @@ public class MenuScreen implements Screen {
         for(int i = 0; i < startScreen.size(); i++) {
             startScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION);
         }
+        currentScreen = startScreen;
+
+        worldSelectionScreen = new Vector<UiElement>();
+        worldSelectionScreen.add(new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, new Color(1.0f, 0.0f, 0.0f, 1.0f), font));
+        worldSelectionScreen.add(new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "FOREST", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
+        System.out.println(worldSelectionScreen);
     }
     public void draw() {
         cam.update();
@@ -42,38 +51,58 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
         batch.begin();
 
-        for(int i = 0; i < startScreen.size(); i++) {
-            startScreen.get(i).draw(batch);
+        for(int i = 0; i < currentScreen.size(); i++) {
+            currentScreen.get(i).draw(batch);
         }
         batch.end();
     }
 
     public void update(float dt) {
         handleInput();
-        for(int i = 0; i < startScreen.size(); i++) {
-            startScreen.get(i).update(dt);
+        for(int i = 0; i < currentScreen.size(); i++) {
+            currentScreen.get(i).update(dt);
         }
+        if(timer < 0.0f && timer > -100.0f) {
+
+            timer = -100.0f;
+
+            currentScreen = nextScreen;
+
+            for(int i = 0; i < currentScreen.size(); i++) currentScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION);
+        }
+        else if(timer <= 2.0f && timer >= 0.0f) timer -=dt;
     }
     private void handleButton(UiButton button) {
         if(button.getText() == "START GAME") {
-            screenManager.setScreen(new GameScreen(), font);
+            //screenManager.setScreen(new GameScreen(), font);
+            //for(int i = 0; i < currentScreen.size(); i++)
+               // currentScreen.get(i).startAnimation(UiElement.FIRST_EXIT_ANIMATION);
+            //currentScreen = worldSelectionScreen;
+            changeScreen(worldSelectionScreen);
         }
         else if(button.getText() == "EXIT") {
             Gdx.app.exit();
         }
     }
+    void changeScreen(Vector<UiElement> screen) {
+        nextScreen = worldSelectionScreen;
+        for(int i = 0; i < currentScreen.size(); i++)
+             currentScreen.get(i).startAnimation(UiElement.FIRST_EXIT_ANIMATION);
+
+        timer = 2.0f;
+    }
     public void handleInput() {
         if(Gdx.input.isTouched()) {
             float mouseX = (1920.0f / Gdx.graphics.getWidth()) * Gdx.input.getX();
             float mouseY = (1080.0f / Gdx.graphics.getHeight()) * Gdx.input.getY();
-            for(int i = 0; i < startScreen.size(); i++) {
-                if(startScreen.get(i).getClass() == UiButton.class) ((UiButton)startScreen.get(i)).press(mouseX, mouseY);
+            for(int i = 0; i < currentScreen.size(); i++) {
+                if(currentScreen.get(i).getClass() == UiButton.class) ((UiButton)currentScreen.get(i)).press(mouseX, mouseY);
             }
         }
-        for(int i = 0; i < startScreen.size(); i++) {
-            if(startScreen.get(i).getClass() == UiButton.class) {
-                if( ((UiButton) startScreen.get(i)).isClicked() ) {
-                    handleButton((UiButton) startScreen.get(i));
+        for(int i = 0; i < currentScreen.size(); i++) {
+            if(currentScreen.get(i).getClass() == UiButton.class) {
+                if( ((UiButton) currentScreen.get(i)).isClicked() ) {
+                    handleButton((UiButton) currentScreen.get(i));
                 }
             }
         }

@@ -16,6 +16,7 @@ public abstract class UiElement {
 
     static final int BASIC = 1;
     static final int FIRST_ANIMATION = 2;
+    static final int FIRST_EXIT_ANIMATION = 3;
     int state;
     BitmapFont font;
     //animation
@@ -46,6 +47,15 @@ public abstract class UiElement {
                 y = realy;
             }
         }
+        else if(state == FIRST_EXIT_ANIMATION) {
+            x -= realx * dt * firstAnimationTime;
+            y -= realy * dt * firstAnimationTime;
+            if(x <= 0 || y <= 0) {
+                state = BASIC;
+                x = 0.0f;
+                y = 0.0f;
+            }
+        }
     }
 
 
@@ -54,11 +64,20 @@ public abstract class UiElement {
     }
 
     void startAnimation(int type) {
-        x = 0.0f;
-        y = 0.0f;
+        if(type == FIRST_ANIMATION) {
+            x = 0.0f;
+            y = 0.0f;
+        }
+        else if(type == FIRST_EXIT_ANIMATION) {
+            x = realx;
+            y = realy;
+        }
+
         state = type;
     }
-
+    int getState() {
+        return state;
+    }
     public void draw(SpriteBatch batch) {
         batch.setColor(realcolor);
         drawElement(batch);
