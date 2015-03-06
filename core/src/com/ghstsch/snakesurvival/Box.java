@@ -3,6 +3,7 @@ package com.ghstsch.snakesurvival;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 /**
@@ -18,10 +19,10 @@ public class Box extends PhysicalObject {
         pastCreateShape(x, y, angle);
     }
     public void draw(SpriteBatch batch) {
-       /* shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1, 1, 0, 1);
-        shapeRenderer.rect(body.getPosition().x-sizeX/2, body.getPosition().y - sizeY/2 , sizeX/2 , sizeY/2, sizeX, sizeY, 1.0f, 1.0f, body.getAngle() / 0.017f);
-        shapeRenderer.end();*/
+       /* spriteBatch.begin(ShapeRenderer.ShapeType.Line);
+        spriteBatch.setColor(1, 1, 0, 1);
+        spriteBatch.rect(body.getPosition().x-sizeX/2, body.getPosition().y - sizeY/2 , sizeX/2 , sizeY/2, sizeX, sizeY, 1.0f, 1.0f, body.getAngle() / 0.017f);
+        spriteBatch.end();*/
 
     }
     public void createShape(float x, float y, float angle) {
@@ -39,6 +40,15 @@ public class Box extends PhysicalObject {
        // body.setTransform(x, y, angle);
     }
     public void update(float dt) {
+
+    }
+    public void resolveCollision(Filter f) {
+
+    }
+    public boolean isDead() {
+        return false;
+    }
+    public void dispose() {
 
     }
 }

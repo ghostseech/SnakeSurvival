@@ -15,16 +15,19 @@ public class SnakeSegment extends PhysicalObject{
     Texture texture;
 
     static final short collisionCategory = 0x08;
-    static final short collisionMask = 0;
+    static final short headCollisionCategory = 0x16;
 
     static final Vector2 shape[] = new Vector2[] {  //triangle shape of segment
             new Vector2( - Player.segmentSize / 2    ,   Player.segmentSize / 2), //left point of shape
             new Vector2(   0.0f                      , - Player.segmentSize / 2), //central point of shape
             new Vector2(   Player.segmentSize / 2    ,   Player.segmentSize / 2)};//right point of shape
 
-    SnakeSegment(float x, float y, float angle, World world, Texture texture) {
+    Player player;
+
+    SnakeSegment(float x, float y, float angle, Player player, World world, Texture texture) {
         super(x, y, angle, world);
         this.texture = texture;
+        this.player = player;
     }
 
     public void update(float dt) {
@@ -60,7 +63,7 @@ public class SnakeSegment extends PhysicalObject{
     public void createShape(float x, float y, float angle) {
         Filter f = new Filter();
         f.categoryBits = collisionCategory;
-        f.maskBits = collisionMask;
+        f.maskBits = -1;
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -80,5 +83,21 @@ public class SnakeSegment extends PhysicalObject{
         fixture.setFilterData(f);
         shape.dispose();
         body.setTransform(x, y, angle);
+        body.setUserData(this);
+    }
+    void changeFilter(short category) {
+        Filter f = new Filter();
+        f.categoryBits = category;
+        f.maskBits = -1;
+        body.getFixtureList().get(0).setFilterData(f);
+    }
+    public void resolveCollision(Filter f) {
+        player.resolveCollision(f, this);
+    }
+    public boolean isDead() {
+        return false;
+    }
+    public void dispose() {
+        world.destroyBody(body);
     }
 }

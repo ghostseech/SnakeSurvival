@@ -22,18 +22,21 @@ public class Player implements GameObject {
     boolean right;
     float snakeSpeed;
     float rotationSpeed;
+    boolean dead;
     Player(float x, float y, float angle, World world) {
         this.world = world;
 
         segmentList = new LinkedList<SnakeSegment>();
         //snake always have at least 3 segments
-        segmentList.add(new SnakeSegment(x, y, 0.0f, world, segmentTexture));
+        segmentList.add(new SnakeSegment(x, y, 0.0f, this, world, segmentTexture));
         segmentList.get(0).body.setTransform(x, y, angle * 0.017f);
-        addSegments(9);
+        segmentList.get(0).changeFilter(SnakeSegment.headCollisionCategory);
+        addSegments(2);
         snakeSpeed = 40000.0f;
         rotationSpeed = 8000.0f;
         right = false;
         left = false;
+        dead = false;
     }
     public void moveForward() {
 
@@ -77,13 +80,23 @@ public class Player implements GameObject {
             float newx = segmentList.getLast().getPosition().x + MathUtils.cos(newrotate + 0.5f * 3.1417f) * segmentSize;
             float newy = segmentList.getLast().getPosition().y + MathUtils.sin(newrotate + 0.5f * 3.1417f) * segmentSize;
 
-            segmentList.addLast(new SnakeSegment(newx, newy, newrotate, world, segmentTexture));
+            segmentList.addLast(new SnakeSegment(newx, newy, newrotate, this, world, segmentTexture));
             //join new segment with next
             segmentList.getLast().joinToNext(segmentList.get((segmentList.size()-1) - 1));
         }
     }
     void removeSegments(int count) {
-
+        for(int i = 0; i < count; i++) {
+            if(segmentList.size() >= 3) {
+                segmentList.getLast().dispose();
+                segmentList.remove(segmentList.getLast());
+            }
+        }
+    }
+    void resolveCollision(Filter f, SnakeSegment segment) {
+        if(f.categoryBits == Fruit.collisionCategory && segment == getHead()) {
+            addSegments(1);
+        }
     }
     SnakeSegment getSegment(int id) {
         if(id >= segmentList.size()) return segmentList.getLast();
@@ -99,5 +112,10 @@ public class Player implements GameObject {
     //return rotation of head
     public float getAngle() {
         return segmentList.get(0).getAngle();
+    }
+    public boolean isDead() {
+        return dead;
+    }
+    public void dispose() {
     }
 }

@@ -1,91 +1,127 @@
 package com.ghstsch.snakesurvival;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+
+import java.util.Vector;
 
 /**
  * Created by aaaa on 15.02.2015.
  */
 public class GameScreen implements Screen {
-    OrthographicCamera cam;
-    SpriteBatch shapeRenderer;
+    public static final int FOREST_WORLD = 1;
+
+    OrthographicCamera worldCam;
+    OrthographicCamera uiCam;
+
+    SpriteBatch spriteBatch;
     World mainWorld;
-    Body groundBody;
     Player player;
-    Box box;
-    Texture boxtexture;
     Box2DDebugRenderer b2render;
     BitmapFont font;
     ScreenManager screenManager;
+    WorldController controller;
+    Vector<GameObject> objectList;
+    int worldType;
+    boolean paused;
+    boolean upgradeScreen;
+    UiButton pauseButton;
+
+    public GameScreen(int worldType) {
+        this.worldType = worldType;
+    }
+
     public void init(ScreenManager screenManager, BitmapFont font)
     {
+        paused = false;
+        upgradeScreen = false;
         this.screenManager = screenManager;
         this.font = font;
         //b2render = new Box2DDebugRenderer(true, true, true, true, true, true);
         b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
-        cam = new OrthographicCamera();
-        cam.setToOrtho(true , 1920, 1080);
-        shapeRenderer = new SpriteBatch();
 
-        shapeRenderer.setProjectionMatrix(cam.combined);
+        worldCam = new OrthographicCamera();
+        worldCam.setToOrtho(true, 1920, 1080);
+        uiCam = new OrthographicCamera();
+        uiCam.setToOrtho(true, 1920, 1080);
+
+        spriteBatch = new SpriteBatch();
+        spriteBatch.setProjectionMatrix(worldCam.combined);
+
         mainWorld = new World(new Vector2(0, 0), true);
 
-        CreateStatic();
-        player = new Player( 500.0f, 500.0f, 30.0f, mainWorld);
-        box = new Box(700.0f, 500.0f, 100.0f, 30.0f, 30.0f, mainWorld);
-        boxtexture = new Texture(Gdx.files.internal("textures/box1.png"));
+        if(worldType == FOREST_WORLD) {
+            controller = new ForestWorldController(mainWorld);
+        }
+
+        controller.generateWorld(1);
+        player = controller.getPlayer();
+        objectList = controller.getObjectList();
+
+        pauseButton = new UiButton(1800.0f, 0.0f, 120.0f, 35.0f, "PAUSE", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
     }
     public void draw()
     {
-        cam.update();
-        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-       // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
-       /* shapeRenderer.begin(PolygonSpriteBatch.ShapeType.Line);
-        shapeRenderer.setColor(1, 1, 0, 1);
-        shapeRenderer.line(0, 0, 1900, 100);
-        shapeRenderer.rect(groundBody.getPosition().x, groundBody.getPosition().y - 10.0f, 1000.0f, 20f);
-        shapeRenderer.end();*/
+        if(!upgradeScreen) {
+            worldCam.update();
+            worldCam.position.x = player.getPosition().x;
+            worldCam.position.y = player.getPosition().y;
+            Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+            b2render.render(mainWorld, worldCam.combined);
 
-        shapeRenderer.begin();
-
-        shapeRenderer.draw(boxtexture, groundBody.getPosition().x, groundBody.getPosition().y - 10.0f, 1000.0f, 20.0f);
-        shapeRenderer.end();
-        //player.draw(shapeRenderer);
-        box.draw(shapeRenderer);
-        b2render.render(mainWorld, cam.combined);
-        shapeRenderer.begin();
-        font.setColor(0.0f, 1.0f, 1.0f,1.0f);
-        font.setScale(0.5f);
-        font.draw(shapeRenderer, "YOBA.^:", 100.0f, 100.0f);
-        font.setScale(1.0f);
-        font.draw(shapeRenderer, "абвБВгд{}.^:", 300.0f, 300.0f);
-        shapeRenderer.end();
+            uiCam.update();
+            spriteBatch.begin();
+            pauseButton.draw(spriteBatch);
+            spriteBatch.end();
+        }
+        else {
+            Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+        }
     }
     public void update(float dt)
     {
+        if(!paused) {
+            controller.update(dt);
+            doPhysicsStep(dt);
+        }
+        if(controller.isGameEnded()) {
+            upgradeScreen = true;
+            paused = true;
+        }
+        if(upgradeScreen && paused) {
+            //update buttons of upgrade screen
+        }
+        else if(upgradeScreen && !paused) {
+            controller.generateWorld(1);
+            player = controller.getPlayer();
+            objectList = controller.getObjectList();
+            upgradeScreen = false;
+        }
         handleInput();
-        player.update(dt);
-        doPhysicsStep(Gdx.graphics.getDeltaTime());
-        //mainWorld.step(6f, 6, 2);
+
+        pauseButton.update(dt);
+
+        if(Gdx.input.isTouched()) {
+            float mouseX = (1920.0f / Gdx.graphics.getWidth()) * Gdx.input.getX();
+            float mouseY = (1080.0f / Gdx.graphics.getHeight()) * Gdx.input.getY();
+            pauseButton.press(mouseX, mouseY);
+        }
+        if(pauseButton.isClicked()) {
+            paused = !paused;
+        }
     }
     public void handleInput()
     {
-       // if(InputHandler.isKeyDown(InputHandler.W))player.getSegment(0).getBody().applyLinearImpulse(-10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), -10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
-        //if(InputHandler.isKeyDown(InputHandler.S))player.getSegment(0).getBody().applyLinearImpulse(10000.0f * MathUtils.cos(player.getAngle() + 0.5f * 3.1417f), 10000.0f * MathUtils.sin(player.getAngle() + 0.5f * 3.1417f), player.getPosition().x, player.getPosition().y, true);
         if(InputHandler.isKeyDown(InputHandler.D))player.turnRight();
         if(InputHandler.isKeyDown(InputHandler.A))player.turnLeft();
-        /*if(InputHandler.isKeyDown(InputHandler.W))player.getSegment(0).getBody().applyForce(0.0f, -100000.0f * MathUtils.sin(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, false);
-        if(InputHandler.isKeyDown(InputHandler.S))player.getSegment(0).getBody().applyForce(0.0f, 100000.0f * MathUtils.sin(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, false);
-        if(InputHandler.isKeyDown(InputHandler.D))player.getSegment(0).getBody().applyForce(100000.0f * MathUtils.cos(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, 0.0f, true);
-        if(InputHandler.isKeyDown(InputHandler.A))player.getSegment(0).getBody().applyForce(-100000.0f * MathUtils.cos(player.getSegment(0).getAngle() + 0.5f * 3.1417f), 0.0f, 0.0f, 0.0f, true);*/
     }
     private float accumulator = 0;
 
@@ -98,26 +134,6 @@ public class GameScreen implements Screen {
             mainWorld.step(1/60.0f, 6, 2);
             accumulator -= 1/60.0f;
         }
-    }
-    private void CreateStatic()
-    {
-        BodyDef groundBodyDef =new BodyDef();
-// Set its world position
-        groundBodyDef.position.set(new Vector2(0, -10));
-
-// Create a body from the defintion and add it to the world
-
-        groundBody = mainWorld.createBody(groundBodyDef);
-// Create a polygon shape
-        PolygonShape groundBox = new PolygonShape();
-// Set the polygon shape as a box which is twice the size of our view port and 20 high
-// (setAsBox takes half-width and half-height as arguments)
-        groundBox.setAsBox(1000.0f, 10.0f);
-// Create a fixture from our polygon shape and add it to our ground body
-        groundBody.createFixture(groundBox, 0.0f);
-// Clean up after ourselves
-        groundBox.dispose();
-        groundBody.setTransform(40.0f,200.0f,0.0f);
     }
 
 }

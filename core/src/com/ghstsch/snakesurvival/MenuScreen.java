@@ -36,7 +36,7 @@ public class MenuScreen implements Screen {
         startScreen.add(new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "START GAME", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
         startScreen.add(new UiButton(200.0f, 500.0f, 800.0f, 100.0f, "EXIT", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
         for(int i = 0; i < startScreen.size(); i++) {
-            startScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION);
+            startScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION, 2.0f);
         }
         currentScreen = startScreen;
 
@@ -62,34 +62,36 @@ public class MenuScreen implements Screen {
         for(int i = 0; i < currentScreen.size(); i++) {
             currentScreen.get(i).update(dt);
         }
-        if(timer < 0.0f && timer > -100.0f) {
-
-            timer = -100.0f;
-
-            currentScreen = nextScreen;
-
-            for(int i = 0; i < currentScreen.size(); i++) currentScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION);
+        if(timer != -100.0f) {
+            if(timer > 0) timer -= dt;
+            else {
+                timer = -100.0f;
+                currentScreen = nextScreen;
+                for(int i = 0; i < currentScreen.size(); i++) currentScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION, 1.0f);
+            }
         }
-        else if(timer <= 2.0f && timer >= 0.0f) timer -=dt;
     }
     private void handleButton(UiButton button) {
         if(button.getText() == "START GAME") {
-            //screenManager.setScreen(new GameScreen(), font);
-            //for(int i = 0; i < currentScreen.size(); i++)
-               // currentScreen.get(i).startAnimation(UiElement.FIRST_EXIT_ANIMATION);
-            //currentScreen = worldSelectionScreen;
-            changeScreen(worldSelectionScreen);
+            changeScreen(worldSelectionScreen, UiElement.FIRST_EXIT_ANIMATION, 1.0f);
         }
         else if(button.getText() == "EXIT") {
             Gdx.app.exit();
         }
+        else if(button.getText() == "FOREST") {
+            screenManager.setScreen(new GameScreen(GameScreen.FOREST_WORLD), font);
+        }
     }
     void changeScreen(Vector<UiElement> screen) {
-        nextScreen = worldSelectionScreen;
-        for(int i = 0; i < currentScreen.size(); i++)
-             currentScreen.get(i).startAnimation(UiElement.FIRST_EXIT_ANIMATION);
-
+        nextScreen = screen;
         timer = 2.0f;
+    }
+    void changeScreen(Vector<UiElement> screen, int animationType, float time) {
+        nextScreen = screen;
+        for(int i = 0; i < currentScreen.size(); i++)
+            currentScreen.get(i).startAnimation(animationType, time);
+
+        timer = time;
     }
     public void handleInput() {
         if(Gdx.input.isTouched()) {

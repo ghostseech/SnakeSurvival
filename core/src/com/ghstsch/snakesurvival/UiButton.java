@@ -19,6 +19,8 @@ public class UiButton extends UiElement {
     int type;
     static final int standard = 1;
     Color textColor;
+    Texture texture;
+    Texture texture_pressed;
     UiButton(float x, float y, float width, float height, CharSequence text, int type, Color color, Color textColor, BitmapFont font) {
         super(x, y, color, font);
         wasPressed = false;
@@ -27,13 +29,17 @@ public class UiButton extends UiElement {
         this.text = text;
         this.type = type;
         this.textColor = textColor;
+        if(type == standard) {
+            texture = texture_standard;
+            texture_pressed = texture_standard_pressed;
+        }
     }
 
     public  void drawElement(SpriteBatch batch) {
-        if(type == standard) {
-            if(wasPressed) batch.draw(texture_standard_pressed, x, y, width, height);
-            else batch.draw(texture_standard, x, y, width, height);
-        }
+       // if(type == standard) {
+            if(wasPressed) batch.draw(texture_pressed, x, y, width, height);
+            else batch.draw(texture, x, y, width, height);
+        //}
         font.setScale(1.0f);
         float charSize = font.getCapHeight();
         float charScale = height / charSize / 1.3f;
@@ -57,6 +63,10 @@ public class UiButton extends UiElement {
             return true;
         }
         else return false;
+    }
+    void changeTextures(Texture texture, Texture texture_pressed) {
+        this.texture = texture;
+        this.texture_pressed = texture_standard_pressed;
     }
     CharSequence getText() {
         return text;

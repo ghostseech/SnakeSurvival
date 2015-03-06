@@ -11,4 +11,6 @@ public interface GameObject {
     public void draw(SpriteBatch batch);
     public Vector2 getPosition();
     public float getAngle();
+    public boolean isDead();
+    public void dispose();
 }

@@ -2,6 +2,7 @@ package com.ghstsch.snakesurvival;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**
@@ -16,6 +17,7 @@ public abstract class PhysicalObject implements GameObject {
     }
 
     public abstract void createShape(float x, float y, float angle);
+    public abstract void resolveCollision(Filter f);
     public Body getBody() {
         return body;
     }

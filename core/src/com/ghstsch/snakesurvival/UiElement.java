@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class UiElement {
     protected float x;
     protected float y;
-    static final float firstAnimationTime = 2.0f;
+    //static final float firstAnimationTime = 2.0f;
 
     static final int BASIC = 1;
     static final int FIRST_ANIMATION = 2;
@@ -23,6 +23,7 @@ public abstract class UiElement {
     float realx;
     float realy;
     Color realcolor;
+    float animationTime;
 
     UiElement(float x, float y, Color color, BitmapFont font) {
         realx = x;
@@ -39,8 +40,8 @@ public abstract class UiElement {
 
         }
         else if(state == FIRST_ANIMATION) {
-            x += realx * dt * firstAnimationTime;
-            y += realy * dt * firstAnimationTime;
+            x += realx * dt / animationTime;
+            y += realy * dt / animationTime;
             if(x >= realx || y >= realy) {
                 state = BASIC;
                 x = realx;
@@ -48,8 +49,8 @@ public abstract class UiElement {
             }
         }
         else if(state == FIRST_EXIT_ANIMATION) {
-            x -= realx * dt * firstAnimationTime;
-            y -= realy * dt * firstAnimationTime;
+            x -= realx * dt / animationTime;
+            y -= realy * dt / animationTime;
             if(x <= 0 || y <= 0) {
                 state = BASIC;
                 x = 0.0f;
@@ -63,14 +64,16 @@ public abstract class UiElement {
         return new Vector2(x,y);
     }
 
-    void startAnimation(int type) {
+    void startAnimation(int type, float time) {
         if(type == FIRST_ANIMATION) {
             x = 0.0f;
             y = 0.0f;
+            animationTime = time;
         }
         else if(type == FIRST_EXIT_ANIMATION) {
             x = realx;
             y = realy;
+            animationTime = time;
         }
 
         state = type;
