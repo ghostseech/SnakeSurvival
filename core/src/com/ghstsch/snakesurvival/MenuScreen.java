@@ -1,11 +1,14 @@
 package com.ghstsch.snakesurvival;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.ghstsch.snakesurvival.Ui.UiButton;
+import com.ghstsch.snakesurvival.Ui.UiElement;
+import com.ghstsch.snakesurvival.Ui.UiLabel;
+import com.ghstsch.snakesurvival.Ui.UiProcessor;
 
 import java.util.Vector;
 
@@ -13,100 +16,101 @@ import java.util.Vector;
  * Created by aaaa on 15.02.2015.
  */
 
-public class MenuScreen implements Screen {
-    OrthographicCamera cam;
-    BitmapFont font;
-    SpriteBatch batch;
+public class MenuScreen extends Screen {
+    UiProcessor uiProcessor;
+
     Vector<UiElement> startScreen;
     Vector<UiElement> worldSelectionScreen;
-    Vector<UiElement> currentScreen;
-    ScreenManager screenManager;
-    Vector<UiElement> nextScreen;
-    float timer;
-    public void init(ScreenManager screenManager, BitmapFont font) {
-        timer = -100.0f;
-        this.screenManager = screenManager;
-        this.font = font;
-        batch = new SpriteBatch();
-        cam = new OrthographicCamera();
-        cam.setToOrtho(true, 1920, 1080);
-        batch.setProjectionMatrix(cam.combined);
+
+    BitmapFont bigFont;
+    SpriteBatch batch;
+    OrthographicCamera cam;
+
+    UiButton startGameButton;
+    UiButton exitGameButton;
+
+    UiLabel logoLabel;
+
+    UiButton backButton;
+    UiButton startForestButton;
+
+
+    MenuScreen(ScreenManager screenManager, ResourseManager resourseManager) {
+        super(screenManager, resourseManager);
+    }
+
+    @Override
+    public void init() {
+        bigFont = resourseManager.getFont(0);
+
+        startGameButton = new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "START GAME", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        exitGameButton = new UiButton(200.0f, 500.0f, 800.0f, 100.0f, "EXIT", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+
+        logoLabel = new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, resourseManager.getUiLabelColor(), bigFont);
+
+        backButton = new UiButton(200.0f, 600.0f, 800.0f, 100.0f, "BACK", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        startForestButton = new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "FOREST", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+
         startScreen = new Vector<UiElement>();
-        startScreen.add(new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, new Color(1.0f, 0.0f, 0.0f, 1.0f), font));
-        startScreen.add(new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "START GAME", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
-        startScreen.add(new UiButton(200.0f, 500.0f, 800.0f, 100.0f, "EXIT", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
-        for(int i = 0; i < startScreen.size(); i++) {
-            startScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION, 2.0f);
-        }
-        currentScreen = startScreen;
+        startScreen.add(startGameButton);
+        startScreen.add(exitGameButton);
+        startScreen.add(logoLabel);
 
         worldSelectionScreen = new Vector<UiElement>();
-        worldSelectionScreen.add(new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, new Color(1.0f, 0.0f, 0.0f, 1.0f), font));
-        worldSelectionScreen.add(new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "FOREST", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
+        worldSelectionScreen.add(logoLabel);
+        worldSelectionScreen.add(startForestButton);
+        worldSelectionScreen.add(backButton);
+
+        uiProcessor = new UiProcessor();
+        uiProcessor.setUi(startScreen);
+
+        cam = new OrthographicCamera();
+        cam.setToOrtho(true, 1920, 1080);
+
+        batch = new SpriteBatch();
+        batch.setProjectionMatrix(cam.combined);
     }
+
+    @Override
     public void draw() {
         cam.update();
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
         batch.begin();
-
-        for(int i = 0; i < currentScreen.size(); i++) {
-            currentScreen.get(i).draw(batch);
-        }
+        uiProcessor.draw(batch);
         batch.end();
     }
 
+    @Override
     public void update(float dt) {
         handleInput();
-        for(int i = 0; i < currentScreen.size(); i++) {
-            currentScreen.get(i).update(dt);
-        }
-        if(timer != -100.0f) {
-            if(timer > 0) timer -= dt;
-            else {
-                timer = -100.0f;
-                currentScreen = nextScreen;
-                for(int i = 0; i < currentScreen.size(); i++) currentScreen.get(i).startAnimation(UiElement.FIRST_ANIMATION, 1.0f);
-            }
-        }
     }
-    private void handleButton(UiButton button) {
-        if(button.getText() == "START GAME") {
-            changeScreen(worldSelectionScreen, UiElement.FIRST_EXIT_ANIMATION, 1.0f);
-        }
-        else if(button.getText() == "EXIT") {
-            Gdx.app.exit();
-        }
-        else if(button.getText() == "FOREST") {
-            screenManager.setScreen(new GameScreen(GameScreen.FOREST_WORLD), font);
-        }
-    }
-    void changeScreen(Vector<UiElement> screen) {
-        nextScreen = screen;
-        timer = 2.0f;
-    }
-    void changeScreen(Vector<UiElement> screen, int animationType, float time) {
-        nextScreen = screen;
-        for(int i = 0; i < currentScreen.size(); i++)
-            currentScreen.get(i).startAnimation(animationType, time);
 
-        timer = time;
-    }
+    @Override
     public void handleInput() {
-        if(Gdx.input.isTouched()) {
-            float mouseX = (1920.0f / Gdx.graphics.getWidth()) * Gdx.input.getX();
-            float mouseY = (1080.0f / Gdx.graphics.getHeight()) * Gdx.input.getY();
-            for(int i = 0; i < currentScreen.size(); i++) {
-                if(currentScreen.get(i).getClass() == UiButton.class) ((UiButton)currentScreen.get(i)).press(mouseX, mouseY);
+        uiProcessor.update();
+        Vector<UiButton> clickedList = uiProcessor.getClickedButtonList();
+
+        for(int i = 0; i < clickedList.size(); i++) {
+            UiButton button = clickedList.get(i);
+            if(button == startGameButton) {
+                uiProcessor.setUi(worldSelectionScreen);
+            }
+            else if(button == exitGameButton) {
+                Gdx.app.exit();
+            }
+            else if(button == backButton) {
+                uiProcessor.setUi(startScreen);
+            }
+            else if(button == startForestButton) {
+                resourseManager.setWorldController(new ForestWorldController());
+                screenManager.setScreen(ScreenManager.GAME_SCREEN, true);
             }
         }
-        for(int i = 0; i < currentScreen.size(); i++) {
-            if(currentScreen.get(i).getClass() == UiButton.class) {
-                if( ((UiButton) currentScreen.get(i)).isClicked() ) {
-                    handleButton((UiButton) currentScreen.get(i));
-                }
-            }
-        }
+    }
+
+    @Override
+    public void dispose() {
 
     }
 }

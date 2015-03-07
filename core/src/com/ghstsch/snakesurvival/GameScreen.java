@@ -1,88 +1,91 @@
 package com.ghstsch.snakesurvival;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.ghstsch.snakesurvival.Ui.UiButton;
+import com.ghstsch.snakesurvival.Ui.UiElement;
+import com.ghstsch.snakesurvival.Ui.UiLabel;
+import com.ghstsch.snakesurvival.Ui.UiProcessor;
 
 import java.util.Vector;
 
 /**
  * Created by aaaa on 15.02.2015.
  */
-public class GameScreen implements Screen {
+public class GameScreen extends Screen {
     public static final int FOREST_WORLD = 1;
+
+    Vector<UiElement> ingameUi;
+    Vector<UiElement> pauseUi;
+
+    UiButton pauseButton;
+    UiButton continueGameButton;
+    UiButton backToMenuButton;
+
+    UiLabel biomassIndicator;
+
+    UiProcessor uiProcessor;
 
     OrthographicCamera worldCam;
     OrthographicCamera uiCam;
 
     SpriteBatch spriteBatch;
-    World mainWorld;
-    Player player;
-    Box2DDebugRenderer b2render;
-    BitmapFont font;
-    ScreenManager screenManager;
     WorldController controller;
-    Vector<GameObject> objectList;
-    int worldType;
-    boolean paused;
-    boolean upgradeScreen;
-    //ingame ui
-    UiButton pauseButton;
-    UiLabel biomassIndicator;
-    //Update screen
-    UiLabel speedIndicator;
-    UiLabel digestionIndicator;
-    UiLabel fireIndicator;
+    Box2DDebugRenderer b2render;
 
-    UiButton speedIncrease;
-    UiButton digestionIncrease;
-    UiButton fireIncrease;
-
-
-    UiButton nextDayButton;
-    float playerBiomass;
-    //snake stats
-    int speedLevel;
-    int digestionLevel;
-    int fireLevel;
-
-    public GameScreen(int worldType) {
-        this.worldType = worldType;
+    public GameScreen(ScreenManager screenManager, ResourseManager resourseManager) {
+        super(screenManager, resourseManager);
     }
 
-    public void init(ScreenManager screenManager, BitmapFont font)
+    @Override
+    public void init()
     {
-        paused = false;
-        upgradeScreen = false;
-        this.screenManager = screenManager;
-        this.font = font;
-        //setup snake
-        digestionLevel = 1;
-        speedLevel = 1;
-        fireLevel = 0;
-        //update screen
-        nextDayButton = new UiButton(1600, 480, 240, 120, ">", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
-        playerBiomass = 0.0f;
+        uiProcessor = new UiProcessor();
 
-        speedIndicator     = new UiLabel("", 1.0f, 100.0f, 300.0f, new Color(0.4f, 0.5f, 1.0f, 1.0f), font);
-        digestionIndicator = new UiLabel("", 1.0f, 100.0f, 500.0f, new Color(0.4f, 0.5f, 1.0f, 1.0f), font);
-        fireIndicator      = new UiLabel("", 1.0f, 100.0f, 700.0f, new Color(0.4f, 0.5f, 1.0f, 1.0f), font);
+        ingameUi = new Vector<UiElement>();
+        pauseUi = new Vector<UiElement>();
 
-        speedIncrease     = new UiButton(1000, 300, 240, 120, "BUY", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
-        digestionIncrease = new UiButton(1000, 500, 240, 120, "BUY", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
-        fireIncrease      = new UiButton(1000, 700, 240, 120, "BUY", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
+        pauseButton = new UiButton(
+                1750.0f, 0.0f,
+                170.0f, 50.0f,
+                "PAUSE", UiButton.standard,
+                resourseManager.getUiColor(),
+                resourseManager.getUiTextColor(),
+                resourseManager.getFont(0));
 
-        //ingame ui
-        pauseButton = new UiButton(1800.0f, 0.0f, 120.0f, 35.0f, "PAUSE", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font);
-        biomassIndicator = new UiLabel("BIOMASS:", 0.3f, 30.0f, 30.0f, new Color(0.4f, 0.5f, 1.0f, 1.0f), font);
-        //b2render = new Box2DDebugRenderer(true, true, true, true, true, true);
-        b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
+        continueGameButton = new UiButton(
+                200.0f, 300.0f,
+                800.0f, 100.0f,
+                "CONTINUE", UiButton.standard,
+                resourseManager.getUiColor(),
+                resourseManager.getUiTextColor(),
+                resourseManager.getFont(0));
+
+        backToMenuButton = new UiButton(
+                200.0f, 500.0f,
+                800.0f, 100.0f,
+                "BACK TO MENU", UiButton.standard,
+                resourseManager.getUiColor(),
+                resourseManager.getUiTextColor(),
+                resourseManager.getFont(0));
+
+        biomassIndicator = new UiLabel("BIOMASS:", 0.3f,
+                30.0f, 30.0f,
+                resourseManager.getUiTextColor(),
+                resourseManager.getFont(0));
+
+        ingameUi.add(pauseButton);
+        ingameUi.add(biomassIndicator);
+
+        pauseUi.add(pauseButton);
+        pauseUi.add(continueGameButton);
+        pauseUi.add(backToMenuButton);
+        pauseUi.add(biomassIndicator);
+
+        uiProcessor.setUi(ingameUi);
 
         worldCam = new OrthographicCamera();
         worldCam.setToOrtho(true, 1920, 1080);
@@ -92,159 +95,77 @@ public class GameScreen implements Screen {
         spriteBatch = new SpriteBatch();
         spriteBatch.setProjectionMatrix(worldCam.combined);
 
-        mainWorld = new World(new Vector2(0, 0), true);
-
-        if(worldType == FOREST_WORLD) {
-            controller = new ForestWorldController(mainWorld);
-        }
-
-        controller.generateWorld(1);
-        player = controller.getPlayer();
-        objectList = controller.getObjectList();
+        controller = resourseManager.getCurrentController();
+        b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
     }
+
+    @Override
     public void draw()
     {
-        if(!upgradeScreen) {
-            worldCam.update();
-            worldCam.position.x = player.getPosition().x;
-            worldCam.position.y = player.getPosition().y;
-            Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-            b2render.render(mainWorld, worldCam.combined);
+        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
 
-            uiCam.update();
-            spriteBatch.begin();
-            pauseButton.draw(spriteBatch);
-            biomassIndicator.draw(spriteBatch);
-            spriteBatch.end();
-        }
-        else {
-            Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-            uiCam.update();
-            spriteBatch.begin();
-            biomassIndicator.draw(spriteBatch);
-            nextDayButton.draw(spriteBatch);
-            speedIndicator.draw(spriteBatch);
-            digestionIndicator.draw(spriteBatch);
-            fireIndicator.draw(spriteBatch);
+        worldCam.position.x = controller.getPlayer().getPosition().x;
+        worldCam.position.y = controller.getPlayer().getPosition().y;
 
-            speedIncrease.draw(spriteBatch);
-            digestionIncrease.draw(spriteBatch);
-            fireIncrease.draw(spriteBatch);
-            spriteBatch.end();
-        }
+        worldCam.update();
+
+        b2render.render(controller.getWorld(), worldCam.combined);
+
+        //Vector<GameObject> objectList = controller.getObjectList();
+        //for(int i = 0; i < objectList.size(); i++) objectList.get(i).draw(spriteBatch);
+
+        uiCam.update();
+        spriteBatch.begin();
+        uiProcessor.draw(spriteBatch);
+        spriteBatch.end();
     }
+
+    @Override
     public void update(float dt)
     {
-        if(Gdx.input.isTouched()) {
-            float mouseX = (1920.0f / Gdx.graphics.getWidth()) * Gdx.input.getX();
-            float mouseY = (1080.0f / Gdx.graphics.getHeight()) * Gdx.input.getY();
-            if(upgradeScreen) {
-                nextDayButton.press(mouseX, mouseY);
-                speedIncrease.press(mouseX, mouseY);
-                digestionIncrease.press(mouseX, mouseY);
-                fireIncrease.press(mouseX, mouseY);
-            }
-            else {
-                pauseButton.press(mouseX, mouseY);
-            }
-        }
-
-        if(controller.isGameEnded()) {
-            upgradeScreen = true;
-            paused = true;
-            playerBiomass = player.getBiomass();
-            controller.continueGame();
-        }
-
-
-        if(upgradeScreen) {
-            if(paused) {
-                biomassIndicator.setText("BIOMASS:" + playerBiomass);
-                biomassIndicator.update(dt);
-                nextDayButton.update(dt);
-
-                speedIndicator.setText("SPEED:" + speedLevel);
-                digestionIndicator.setText("DIGEST:" + digestionLevel);;
-                fireIndicator.setText("FIRE:" + fireLevel);
-
-                speedIndicator.update(dt);
-                digestionIndicator.update(dt);
-                fireIndicator.update(dt);
-
-                speedIncrease.update(dt);
-                digestionIncrease.update(dt);
-                fireIncrease.update(dt);
-
-                if(nextDayButton.isClicked()) {
-                    paused = false;
-                    controller.generateWorld(controller.getCurrentDay() + 1);
-                    player = controller.getPlayer();
-                    player.setBiomass(playerBiomass);
-                    player.setup(speedLevel, digestionLevel, fireLevel);
-                    objectList = controller.getObjectList();
-                    upgradeScreen = false;
-                }
-                if(speedIncrease.isClicked()) {
-                    if(playerBiomass >= 100.0f) {
-                        speedLevel += 1;
-                        System.out.println(playerBiomass);
-                        playerBiomass -= 100.0f;
-                        System.out.println(playerBiomass);
-                    }
-                }
-                if(digestionIncrease.isClicked()) {
-                    if(playerBiomass >= 100.0f) {
-                        digestionLevel += 1;
-                        playerBiomass -= 100.0f;
-                    }
-                }
-                if(fireIncrease.isClicked()) {
-                    if(playerBiomass >= 100.0f) {
-                        fireLevel += 1;
-                        playerBiomass -= 100.0f;
-                    }
-                }
-            }
-        }
-        else {
-            biomassIndicator.setText("BIOMASS:" + player.getBiomass());
-            biomassIndicator.update(dt);
-            pauseButton.update(dt);
-            if(pauseButton.isClicked()) {
-                paused = !paused;
-            }
-            if(!paused) {
-                controller.update(dt);
-                doPhysicsStep(dt);
-            }
-        }
         handleInput();
-        Timer t;
+        if(uiProcessor.getUi() == ingameUi) {
+            controller.update(dt);
+            if(controller.isGameEnded()) {
+                screenManager.setScreen(ScreenManager.UPDATE_SCREEN, true);
+                resourseManager.setPlayerStats(controller.getPlayer().getStats());
+            }
+        }
+
+        biomassIndicator.setText("BIOMASS:" + (int)controller.getPlayer().getStats().getBiomass());
     }
+
+    @Override
     public void handleInput()
     {
-        if(InputHandler.isKeyDown(InputHandler.D))player.turnRight();
-        if(InputHandler.isKeyDown(InputHandler.A))player.turnLeft();
-        if(Gdx.input.isTouched()) {
-            if(Gdx.input.getX() > Gdx.graphics.getWidth()/2)player.turnRight();
-            else player.turnLeft();
-        }
-    }
-    //private float accumulator = 0;
+        uiProcessor.update();
 
-    private void doPhysicsStep(float deltaTime) {
-        mainWorld.step(deltaTime, 6, 2);
-    }
-       /* // fixed time step
-        // max frame time to avoid spiral of death (on slow devices)
-        float frameTime = Math.min(deltaTime, 0.25f);
-        accumulator += frameTime;
-        while (accumulator >= 1/60.0f) {
-            mainWorld.step(1/60.0f, 6, 2);
-            accumulator -= 1/60.0f;
+        Vector<UiButton> clickedList = uiProcessor.getClickedButtonList();
+
+        for(int i = 0; i < clickedList.size(); i++) {
+            UiButton button = clickedList.get(i);
+            if (button == pauseButton) {
+                uiProcessor.setUi(pauseUi);
+            }
+            else if (button == continueGameButton) {
+                uiProcessor.setUi(ingameUi);
+            }
+            else if (button == backToMenuButton) {
+                screenManager.setScreen(ScreenManager.MENU_SCREEN, true);
+            }
+        }
+
+        if(InputHandler.isKeyDown(InputHandler.D))controller.getPlayer().turnRight();
+        if(InputHandler.isKeyDown(InputHandler.A))controller.getPlayer().turnLeft();
+        if(Gdx.input.isTouched()) {
+            if(Gdx.input.getX() > Gdx.graphics.getWidth()/2)controller.getPlayer().turnRight();
+            else controller.getPlayer().turnLeft();
         }
     }
-*/
+
+    @Override
+    public void dispose() {
+
+    }
 }

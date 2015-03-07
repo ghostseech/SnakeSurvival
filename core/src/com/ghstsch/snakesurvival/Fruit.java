@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.*;
 public class Fruit extends PhysicalObject{
     public static final float radius = 20.0f;
     public static final int APPLE = 1;
-    static final short collisionCategory = 0x04;
     public static Texture appleTexture;// = (Gdx.files.internal(""))
     Texture texture;
     boolean dead;
@@ -27,10 +26,6 @@ public class Fruit extends PhysicalObject{
     }
 
     public void createShape(float x, float y, float angle) {
-        Filter f = new Filter();
-        f.categoryBits = collisionCategory;
-        f.maskBits = -1;
-
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
@@ -45,7 +40,6 @@ public class Fruit extends PhysicalObject{
         fixtureDef.restitution = 0.7f;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setFilterData(f);
         shape.dispose();
         body.setTransform(x, y, angle);
         body.setUserData(this);
@@ -59,9 +53,9 @@ public class Fruit extends PhysicalObject{
     public void draw(SpriteBatch batch) {
 
     }
-    public void resolveCollision(Filter f) {
-        if(f.categoryBits == SnakeSegment.headCollisionCategory) {
-            dead = true;
+    public void resolveCollision(PhysicalObject object) {
+        if(object.getClass() == SnakeSegment.class) {
+            if(((SnakeSegment)object).isHead()) dead = true;
         }
     }
     public void dispose() {

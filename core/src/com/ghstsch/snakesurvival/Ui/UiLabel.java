@@ -1,4 +1,4 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,17 +10,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class UiLabel extends UiElement {
     CharSequence text;
     float size;
-    UiLabel(CharSequence text, float size, float x, float y, Color color, BitmapFont font) {
+    public UiLabel(CharSequence text, float size, float x, float y, Color color, BitmapFont font) {
         super(x, y, color, font);
         this.text = text;
         this.size = size;
     }
     public  void drawElement(SpriteBatch batch) {
-        font.setColor(realcolor);
+        font.setColor(color);
         font.setScale(size);
         font.draw(batch, text, x, y);
     }
-    void setText(CharSequence text) {
+    public void setText(CharSequence text) {
         this.text = text;
     }
 }

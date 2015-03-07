@@ -14,9 +14,6 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 public class SnakeSegment extends PhysicalObject{
     Texture texture;
 
-    static final short collisionCategory = 0x08;
-    static final short headCollisionCategory = 0x16;
-
     static final Vector2 shape[] = new Vector2[] {  //triangle shape of segment
             new Vector2( - Player.segmentSize / 2    ,   Player.segmentSize / 2), //left point of shape
             new Vector2(   0.0f                      , - Player.segmentSize / 2), //central point of shape
@@ -52,19 +49,13 @@ public class SnakeSegment extends PhysicalObject{
         float yoffset = - MathUtils.sin(angle) * Player.segmentSize/2;
         jointDef.upperAngle = 30.0f * 0.017f;
         jointDef.lowerAngle = -30.0f * 0.017f;
-       // jointDef.referenceAngle = 30.0f;
         jointDef.initialize(
                 segment.getBody(), this.getBody(), //connect this body to segment body
                 new Vector2(segment.getPosition().x + xoffset, segment.getPosition().y + yoffset)); //center of back side next segment
         jointDef.enableLimit = true;
-        //jointDef.enableMotor = false;
         Joint joint = world.createJoint(jointDef);
     }
     public void createShape(float x, float y, float angle) {
-        Filter f = new Filter();
-        f.categoryBits = collisionCategory;
-        f.maskBits = -1;
-
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
@@ -80,23 +71,22 @@ public class SnakeSegment extends PhysicalObject{
         fixtureDef.restitution = 0.7f;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setFilterData(f);
         shape.dispose();
         body.setTransform(x, y, angle);
         body.setUserData(this);
     }
-    void changeFilter(short category) {
-        Filter f = new Filter();
-        f.categoryBits = category;
-        f.maskBits = -1;
-        body.getFixtureList().get(0).setFilterData(f);
+    public boolean isHead() {
+        return player.getHead() == this;
     }
-    public void resolveCollision(Filter f) {
-        player.resolveCollision(f, this);
+
+    public void resolveCollision(PhysicalObject object) {
+        player.resolveCollision(object, this);
     }
+
     public boolean isDead() {
         return false;
     }
+
     public void dispose() {
         world.destroyBody(body);
     }

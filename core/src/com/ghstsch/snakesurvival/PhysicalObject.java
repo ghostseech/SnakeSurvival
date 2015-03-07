@@ -11,13 +11,14 @@ import com.badlogic.gdx.physics.box2d.World;
 public abstract class PhysicalObject implements GameObject {
     protected Body body;
     protected World world;
+
     public PhysicalObject(float x, float y, float angle, World world) {
         this.world = world;
         createShape(x, y, angle);
     }
 
     public abstract void createShape(float x, float y, float angle);
-    public abstract void resolveCollision(Filter f);
+    public abstract void resolveCollision(PhysicalObject object);
     public Body getBody() {
         return body;
     }

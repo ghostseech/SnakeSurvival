@@ -20,38 +20,40 @@ public class Player implements GameObject {
     World world;
     boolean left;
     boolean right;
-    float snakeSpeed;
-    float rotationSpeed;
     boolean dead;
 
-    float biomass;
+    float snakeSpeed;
+    float rotationSpeed;
+    PlayerStats stats;
 
     float maxBiomassCost;
 
-    int speedLevel;
-    int digestionLevel;
-    int fireLevel;
-
     Player(float x, float y, float angle, World world) {
         this.world = world;
+
+        stats = new PlayerStats();
 
         segmentList = new LinkedList<SnakeSegment>();
         //snake always have at least 3 segments
         segmentList.add(new SnakeSegment(x, y, 0.0f, this, world, segmentTexture));
         segmentList.get(0).body.setTransform(x, y, angle * 0.017f);
-        segmentList.get(0).changeFilter(SnakeSegment.headCollisionCategory);
         addSegments(2);
+
         snakeSpeed = 40000.0f;
         rotationSpeed = 8000.0f;
+
         right = false;
         left = false;
+
         dead = false;
-        biomass = 0.0f;
-        setup(1, 1, 0);
+
+        setup();
     }
+
     public void moveForward() {
 
     }
+
     public void turnRight() {
         right = true;
         left = false;
@@ -84,7 +86,7 @@ public class Player implements GameObject {
         right = false;
         left = false;
 
-        int segmentsDelta = 3 + (int)(biomass/100.0f) - segmentList.size();
+        int segmentsDelta = 3 + (int)(stats.getBiomass()/100.0f) - segmentList.size();
         if(segmentsDelta >= 1) {
             addSegments(segmentsDelta);
         }
@@ -104,7 +106,7 @@ public class Player implements GameObject {
             segmentList.getLast().joinToNext(segmentList.get((segmentList.size()-1) - 1));
         }
     }
-    void removeSegments(int count) {
+    public void removeSegments(int count) {
         for(int i = 0; i < count; i++) {
             if(segmentList.size() > 3) {
                 segmentList.getLast().dispose();
@@ -112,17 +114,16 @@ public class Player implements GameObject {
             }
         }
     }
-    void resolveCollision(Filter f, SnakeSegment segment) {
-        if(f.categoryBits == Fruit.collisionCategory && segment == getHead()) {
-            //removeSegments(1);
-            biomass += 10.0f;
+    public void resolveCollision(PhysicalObject object, SnakeSegment segment) {
+        if(object.getClass() == Fruit.class && segment == getHead()) {
+            stats.addBiomass(((Fruit)object).getBiomass());
         }
     }
-    SnakeSegment getSegment(int id) {
+    public SnakeSegment getSegment(int id) {
         if(id >= segmentList.size()) return segmentList.getLast();
         else                         return segmentList.get(id);
     }
-    SnakeSegment getHead() {
+    public SnakeSegment getHead() {
         return segmentList.get(0);
     }
     //return position of head
@@ -139,20 +140,32 @@ public class Player implements GameObject {
     public void dispose() {
         for(int i = 0; i < segmentList.size(); i++)segmentList.get(i).dispose();
     }
-    float getBiomass() {
-        return biomass;
+
+    public PlayerStats getStats() {
+        return stats;
     }
-    void setBiomass(float biomass) {
-        this.biomass = biomass;
+
+    public void setStats(PlayerStats stats) {
+        this.stats = stats;
     }
+
     void setSpeed(float speed) {
         snakeSpeed = speed;
     }
-    void setup(int speedLevel, int digestionLevel, int fireLevel) {
-        this.speedLevel = speedLevel;
-        this.digestionLevel = digestionLevel;
-        this.fireLevel = fireLevel;
-        if(speedLevel == 1) {
+
+    public void resetPlayerPhysics(float x, float y, float angle) {
+        segmentList.clear();
+        segmentList.add(new SnakeSegment(x, y, 0.0f, this, world, segmentTexture));
+        segmentList.get(0).body.setTransform(x, y, angle * 0.017f);
+        addSegments(2);
+    }
+    public void setup() {
+        int speedLevel = stats.getSpeedLevel();
+        int digestionLevel = stats.getDigestionLevel();
+        int poisonLevel = stats.getPoisonLevel();
+        int armorLevel = stats.getArmorLevel();
+
+        if(stats.getSpeedLevel() == 1) {
             rotationSpeed = 4000.0f;
         }
         else if(speedLevel == 2) {
@@ -164,10 +177,17 @@ public class Player implements GameObject {
         else if(digestionLevel == 2) {
             maxBiomassCost = 20.0f;
         }
-        if(fireLevel == 1) {
+        if(poisonLevel == 1) {
 
         }
-        else if(fireLevel == 2) {
+        else if(poisonLevel == 2) {
+
+        }
+        if(armorLevel == 1) {
+
+        }
+        else if(armorLevel == 2)
+        {
 
         }
     }

@@ -1,4 +1,4 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * Created by aaaa on 03.03.2015.
  */
 public class UiButton extends UiElement {
+    public static final int standard = 1;
+
     boolean wasPressed;
     static Texture texture_standard = new Texture(Gdx.files.internal("ui/button_1.png"));
     static Texture texture_standard_pressed = new Texture(Gdx.files.internal("ui/button_1_pressed.png"));
@@ -17,11 +19,11 @@ public class UiButton extends UiElement {
     float height;
     CharSequence text;
     int type;
-    static final int standard = 1;
+
     Color textColor;
     Texture texture;
     Texture texture_pressed;
-    UiButton(float x, float y, float width, float height, CharSequence text, int type, Color color, Color textColor, BitmapFont font) {
+    public UiButton(float x, float y, float width, float height, CharSequence text, int type, Color color, Color textColor, BitmapFont font) {
         super(x, y, color, font);
         wasPressed = false;
         this.width = width;
@@ -52,11 +54,11 @@ public class UiButton extends UiElement {
         font.setColor(textColor);
         font.draw(batch, text, x + translateX, y + translateY);
     }
-    void press(float x, float y) {
-        if((x > realx && x < realx + width) && (y > realy && y < realy + height)) wasPressed = true;
+    public void press(float x, float y) {
+        if((x > this.x && x < this.x + width) && (y > this.y && y < this.y + height)) wasPressed = true;
         else wasPressed = false;
     }
-    boolean isClicked() {
+    public boolean isClicked() {
         if(wasPressed && !Gdx.input.isTouched())
         {
             wasPressed = false;
@@ -70,5 +72,8 @@ public class UiButton extends UiElement {
     }
     CharSequence getText() {
         return text;
+    }
+    void setText(CharSequence text) {
+        this.text = text;
     }
 }

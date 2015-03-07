@@ -1,7 +1,7 @@
 package com.ghstsch.snakesurvival.Tasks;
 
 import com.badlogic.gdx.utils.Timer;
-import com.ghstsch.snakesurvival.UiElement;
+import com.ghstsch.snakesurvival.Ui.UiElement;
 
 /**
  * Created by aaaa on 07.03.2015.
