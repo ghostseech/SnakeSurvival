@@ -2,7 +2,7 @@ package com.ghstsch.snakesurvival;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.ghstsch.snakesurvival.Screens.ScreenManager;
 
 public class SnakeSurvival extends ApplicationAdapter {
 	ScreenManager screenManager;

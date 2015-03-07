@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * Created by aaaa on 03.03.2015.
  */
 public class UiLabel extends UiElement {
-    CharSequence text;
-    float size;
+    private CharSequence text;
+    private float size;
     public UiLabel(CharSequence text, float size, float x, float y, Color color, BitmapFont font) {
         super(x, y, color, font);
         this.text = text;

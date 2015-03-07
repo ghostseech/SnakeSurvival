@@ -1,9 +1,11 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.ghstsch.snakesurvival.PlayerStats;
+import com.ghstsch.snakesurvival.ResourseManager;
 import com.ghstsch.snakesurvival.Ui.UiButton;
 import com.ghstsch.snakesurvival.Ui.UiElement;
 import com.ghstsch.snakesurvival.Ui.UiLabel;
@@ -15,25 +17,25 @@ import java.util.Vector;
  * Created by aaaa on 07.03.2015.
  */
 public class UpdateScreen extends Screen {
-    PlayerStats stats;
-    UiProcessor uiProcessor;
-    Vector<UiElement> ui;
-    SpriteBatch batch;
-    OrthographicCamera cam;
+    private PlayerStats stats;
+    private UiProcessor uiProcessor;
+    private Vector<UiElement> ui;
+    private SpriteBatch batch;
+    private OrthographicCamera cam;
 
-    UiLabel biomassIndicator;
+    private UiLabel biomassIndicator;
 
-    UiLabel speed;
-    UiLabel armor;
-    UiLabel poison;
-    UiLabel digestion;
+    private UiLabel speed;
+    private UiLabel armor;
+    private UiLabel poison;
+    private UiLabel digestion;
 
-    UiButton speedUp;
-    UiButton armorUp;
-    UiButton poisonUp;
-    UiButton digestionUp;
+    private UiButton speedUp;
+    private UiButton armorUp;
+    private UiButton poisonUp;
+    private UiButton digestionUp;
 
-    UiButton nextDay;
+    private UiButton nextDay;
 
     public UpdateScreen(ScreenManager screenManager, ResourseManager resourseManager) {
         super(screenManager, resourseManager);
@@ -85,29 +87,29 @@ public class UpdateScreen extends Screen {
                 resourseManager.getFont(0));
 
         speedUp = new UiButton(
-                630.0f, 200.0f,
-                200.0f, 55.0f,
+                630.0f, 150.0f,
+                200.0f, 120.0f,
                 "BUY", UiButton.standard,
                 resourseManager.getUiColor(), resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));
 
         armorUp = new UiButton(
-                630.0f, 400.0f,
-                200.0f, 55.0f,
+                630.0f, 350.0f,
+                200.0f, 120.0f,
                 "BUY", UiButton.standard,
                 resourseManager.getUiColor(), resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));
 
         poisonUp = new UiButton(
-                630.0f, 600.0f,
-                200.0f, 55.0f,
+                630.0f, 550.0f,
+                200.0f, 120.0f,
                 "BUY", UiButton.standard,
                 resourseManager.getUiColor(), resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));
 
         digestionUp = new UiButton(
-                630.0f, 800.0f,
-                200.0f, 55.0f,
+                630.0f, 750.0f,
+                200.0f, 120.0f,
                 "BUY", UiButton.standard,
                 resourseManager.getUiColor(), resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));

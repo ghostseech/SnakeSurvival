@@ -1,4 +1,6 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Screens;
+
+import com.ghstsch.snakesurvival.ResourseManager;
 
 /**
  * Created by aaaa on 03.03.2015.
@@ -8,14 +10,15 @@ public class ScreenManager {
     public static final int MENU_SCREEN = 2;
     public static final int UPDATE_SCREEN = 3;
 
-    ResourseManager resourseManager;
+    private ResourseManager resourseManager;
 
-    Screen gameScreen;
-    Screen menuScreen;
-    Screen updateScreen;
+    private Screen gameScreen;
+    private Screen menuScreen;
+    private Screen updateScreen;
 
-    Screen currentScreen;
-    void setScreen(int screen, boolean recreate) {
+    private Screen currentScreen;
+
+    public void setScreen(int screen, boolean recreate) {
         if(screen == GAME_SCREEN) {
             if(recreate || gameScreen == null) {
                 gameScreen = new GameScreen(this, resourseManager);
@@ -38,13 +41,16 @@ public class ScreenManager {
             currentScreen = updateScreen;
         }
     }
-    void setResourse(ResourseManager resourseManager) {
+
+    public void setResourse(ResourseManager resourseManager) {
         this.resourseManager = resourseManager;
     }
-    void draw() {
+
+    public void draw() {
         currentScreen.draw();
     }
-    void update(float dt) {
+
+    public void update(float dt) {
         currentScreen.update(dt);
     }
 }

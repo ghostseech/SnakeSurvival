@@ -9,8 +9,8 @@ import java.util.Vector;
  * Created by aaaa on 07.03.2015.
  */
 public class UiProcessor {
-    Vector<UiElement> ui;
-    Vector<UiButton> clickedList;
+    private Vector<UiElement> ui;
+    private Vector<UiButton> clickedList;
     public UiProcessor() {
         clickedList = new Vector<UiButton>();
     }

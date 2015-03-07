@@ -1,6 +1,5 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
@@ -13,10 +12,12 @@ public class Fruit extends PhysicalObject{
     public static final float radius = 20.0f;
     public static final int APPLE = 1;
     public static Texture appleTexture;// = (Gdx.files.internal(""))
-    Texture texture;
-    boolean dead;
-    float biomass;
-    Fruit(int type, float x, float y, float angle, World world) {
+
+    private Texture texture;
+    private boolean dead;
+    private float biomass;
+
+    public Fruit(int type, float x, float y, float angle, World world) {
         super(x, y, angle, world);
         if(type == APPLE) {
             texture = appleTexture;
@@ -25,6 +26,7 @@ public class Fruit extends PhysicalObject{
         dead = false;
     }
 
+    @Override
     public void createShape(float x, float y, float angle) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -45,19 +47,28 @@ public class Fruit extends PhysicalObject{
         body.setUserData(this);
     }
 
+    @Override
     public void update(float dt) {
     }
+
+    @Override
     public boolean isDead() {
         return dead;
     }
+
+    @Override
     public void draw(SpriteBatch batch) {
 
     }
+
+    @Override
     public void resolveCollision(PhysicalObject object) {
         if(object.getClass() == SnakeSegment.class) {
             if(((SnakeSegment)object).isHead()) dead = true;
         }
     }
+
+    @Override
     public void dispose() {
         world.destroyBody(body);
     }

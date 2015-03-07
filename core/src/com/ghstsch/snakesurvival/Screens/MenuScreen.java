@@ -1,10 +1,12 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.ghstsch.snakesurvival.Worlds.ForestWorldController;
+import com.ghstsch.snakesurvival.ResourseManager;
 import com.ghstsch.snakesurvival.Ui.UiButton;
 import com.ghstsch.snakesurvival.Ui.UiElement;
 import com.ghstsch.snakesurvival.Ui.UiLabel;
@@ -17,25 +19,25 @@ import java.util.Vector;
  */
 
 public class MenuScreen extends Screen {
-    UiProcessor uiProcessor;
+    private UiProcessor uiProcessor;
 
-    Vector<UiElement> startScreen;
-    Vector<UiElement> worldSelectionScreen;
+    private Vector<UiElement> startScreen;
+    private Vector<UiElement> worldSelectionScreen;
 
-    BitmapFont bigFont;
-    SpriteBatch batch;
-    OrthographicCamera cam;
+    private BitmapFont bigFont;
+    private SpriteBatch batch;
+    private OrthographicCamera cam;
 
-    UiButton startGameButton;
-    UiButton exitGameButton;
+    private UiButton startGameButton;
+    private UiButton exitGameButton;
 
-    UiLabel logoLabel;
+    private UiLabel logoLabel;
 
-    UiButton backButton;
-    UiButton startForestButton;
+    private UiButton backButton;
+    private UiButton startForestButton;
 
 
-    MenuScreen(ScreenManager screenManager, ResourseManager resourseManager) {
+    public MenuScreen(ScreenManager screenManager, ResourseManager resourseManager) {
         super(screenManager, resourseManager);
     }
 
@@ -43,13 +45,13 @@ public class MenuScreen extends Screen {
     public void init() {
         bigFont = resourseManager.getFont(0);
 
-        startGameButton = new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "START GAME", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
-        exitGameButton = new UiButton(200.0f, 500.0f, 800.0f, 100.0f, "EXIT", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        startGameButton = new UiButton(200.0f, 300.0f, 800.0f, 140.0f, "START GAME", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        exitGameButton = new UiButton(200.0f, 500.0f, 800.0f, 140.0f, "EXIT", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
 
         logoLabel = new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, resourseManager.getUiLabelColor(), bigFont);
 
-        backButton = new UiButton(200.0f, 600.0f, 800.0f, 100.0f, "BACK", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
-        startForestButton = new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "FOREST", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        backButton = new UiButton(200.0f, 600.0f, 800.0f, 140.0f, "BACK", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
+        startForestButton = new UiButton(200.0f, 300.0f, 800.0f, 140.0f, "FOREST", UiButton.standard, resourseManager.getUiColor(), resourseManager.getUiTextColor(), bigFont);
 
         startScreen = new Vector<UiElement>();
         startScreen.add(startGameButton);

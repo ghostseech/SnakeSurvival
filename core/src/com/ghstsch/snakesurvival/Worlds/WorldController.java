@@ -1,10 +1,13 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Worlds;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.ghstsch.snakesurvival.Objects.GameObject;
+import com.ghstsch.snakesurvival.Objects.PhysicalObject;
+import com.ghstsch.snakesurvival.Objects.Player;
+import com.ghstsch.snakesurvival.PlayerStats;
 
 import java.util.Vector;
 
@@ -19,7 +22,7 @@ public abstract class WorldController {
     protected int day;
     protected int finalDay;
 
-    WorldController() {
+    public WorldController() {
         ended = false;
 
         world = new World(new Vector2(0, 0), true);
@@ -76,18 +79,18 @@ public abstract class WorldController {
         return day;
     }
 
-    boolean isGameEnded() {
+    public boolean isGameEnded() {
         return ended;
     }
 
-    void endGame() {
+    public void endGame() {
         ended = true;
     }
 
-    void continueGame() {
+    public void continueGame() {
         ended = false;
     }
-    void disposeObjects() {
+    public void disposeObjects() {
         for(int i = 0; i < objectList.size(); i++)objectList.get(i).dispose();
         objectList.clear();
     }

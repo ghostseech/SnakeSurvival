@@ -26,7 +26,7 @@ public class InputHandler {
         prevKeys = new boolean[MAX_BUTTONS];
     }
 
-    static void update() {
+    public static void update() {
         for(int i = 0; i < MAX_BUTTONS; i++) prevKeys[i] = keys[i];
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) keys[A] = true;
@@ -43,18 +43,18 @@ public class InputHandler {
         else keys[MOUSE] = false;
     }
 
-    static boolean isKeyPressed(int key) {
+    public static boolean isKeyPressed(int key) {
         if(key > MAX_BUTTONS) return false;
         return keys[key] && prevKeys[key];
     }
-    static boolean isKeyDown(int key) {
+    public static boolean isKeyDown(int key) {
         if(key > MAX_BUTTONS) return false;
         return keys[key];
     }
-    static int getMouseX() {
+    public static int getMouseX() {
         return mousePosX;
     }
-    static int getMousePosY() {
+    public static int getMousePosY() {
         return mousePosY;
     }
 }

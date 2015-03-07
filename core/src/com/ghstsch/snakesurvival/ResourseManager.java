@@ -3,6 +3,7 @@ package com.ghstsch.snakesurvival;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.ghstsch.snakesurvival.Worlds.WorldController;
 
 import java.util.Vector;
 
@@ -42,22 +43,22 @@ public class ResourseManager {
         playerStats.setBiomass(stats.getBiomass());
         System.out.println(playerStats + "sdelano");
     }
-    WorldController getCurrentController() {
+    public WorldController getCurrentController() {
         return currentController;
     }
 
-    Color getUiColor() {
+    public Color getUiColor() {
         return uiColor;
     }
 
-    Color getUiTextColor() {
+    public Color getUiTextColor() {
         return uiTextColor;
     }
 
-    Color getUiLabelColor() {
+    public Color getUiLabelColor() {
         return uiLabelColor;
     }
-    BitmapFont getFont(int id) {
+    public BitmapFont getFont(int id) {
         return fonts.get(id);
     }
 }

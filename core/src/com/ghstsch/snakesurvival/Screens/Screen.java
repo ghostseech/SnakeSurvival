@@ -1,15 +1,15 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Screens;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.ghstsch.snakesurvival.ResourseManager;
 
 /**
  * Created by aaaa on 14.02.2015.
  */
 public abstract class Screen {
-    ScreenManager screenManager;
-    ResourseManager resourseManager;
+    protected ScreenManager screenManager;
+    protected ResourseManager resourseManager;
 
-    Screen(ScreenManager screenManager, ResourseManager resourseManager) {
+    public Screen(ScreenManager screenManager, ResourseManager resourseManager) {
         this.screenManager = screenManager;
         this.resourseManager = resourseManager;
     }

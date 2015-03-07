@@ -1,8 +1,7 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Objects;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**

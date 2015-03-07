@@ -1,4 +1,4 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Objects;
 
 
 import com.badlogic.gdx.graphics.Texture;
@@ -6,29 +6,30 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.ghstsch.snakesurvival.PlayerStats;
+
 import java.util.LinkedList;
 
 /**
  * Created by aaaa on 15.02.2015.
  */
 public class Player implements GameObject {
+    private static Texture segmentTexture = new Texture("textures/snake_segment.png");;
+    public static final float segmentSize = 70.0f;
 
-    static final float segmentSize = 50.0f;
-    static Texture segmentTexture = new Texture("textures/snake_segment.png");;
+    private LinkedList<SnakeSegment> segmentList;
+    private World world;
+    private boolean left;
+    private boolean right;
+    private boolean dead;
 
-    LinkedList<SnakeSegment> segmentList;
-    World world;
-    boolean left;
-    boolean right;
-    boolean dead;
+    private float snakeSpeed;
+    private float rotationSpeed;
+    private PlayerStats stats;
 
-    float snakeSpeed;
-    float rotationSpeed;
-    PlayerStats stats;
+    private float maxBiomassCost;
 
-    float maxBiomassCost;
-
-    Player(float x, float y, float angle, World world) {
+    public Player(float x, float y, float angle, World world) {
         this.world = world;
 
         stats = new PlayerStats();
@@ -50,23 +51,14 @@ public class Player implements GameObject {
         setup();
     }
 
-    public void moveForward() {
-
-    }
-
-    public void turnRight() {
-        right = true;
-        left = false;
-    }
-    public void turnLeft() {
-        right = false;
-        left = true;
-    }
+    @Override
     public void draw(SpriteBatch batch) {
         for(int i = 0; i < segmentList.size(); i++) {
             segmentList.get(i).draw(batch);
         }
     }
+
+    @Override
     public void update(float dt) {
 
         float impulseDirX = -snakeSpeed * MathUtils.cos(getAngle() + 0.5f * 3.1417f);
@@ -94,6 +86,26 @@ public class Player implements GameObject {
             removeSegments(segmentsDelta);
         }
     }
+
+    @Override
+    public boolean isDead() {
+        return dead;
+    }
+
+    @Override
+    public void dispose() {
+        for(int i = 0; i < segmentList.size(); i++)segmentList.get(i).dispose();
+    }
+
+    public void turnRight() {
+        right = true;
+        left = false;
+    }
+    public void turnLeft() {
+        right = false;
+        left = true;
+    }
+
     void addSegments(int count) {
         for(int i = 0; i < count; i++) {
             //calculate rotation and position of new segment
@@ -106,6 +118,7 @@ public class Player implements GameObject {
             segmentList.getLast().joinToNext(segmentList.get((segmentList.size()-1) - 1));
         }
     }
+
     public void removeSegments(int count) {
         for(int i = 0; i < count; i++) {
             if(segmentList.size() > 3) {
@@ -114,11 +127,13 @@ public class Player implements GameObject {
             }
         }
     }
+
     public void resolveCollision(PhysicalObject object, SnakeSegment segment) {
         if(object.getClass() == Fruit.class && segment == getHead()) {
             stats.addBiomass(((Fruit)object).getBiomass());
         }
     }
+
     public SnakeSegment getSegment(int id) {
         if(id >= segmentList.size()) return segmentList.getLast();
         else                         return segmentList.get(id);
@@ -133,12 +148,6 @@ public class Player implements GameObject {
     //return rotation of head
     public float getAngle() {
         return segmentList.get(0).getAngle();
-    }
-    public boolean isDead() {
-        return dead;
-    }
-    public void dispose() {
-        for(int i = 0; i < segmentList.size(); i++)segmentList.get(i).dispose();
     }
 
     public PlayerStats getStats() {
@@ -166,10 +175,10 @@ public class Player implements GameObject {
         int armorLevel = stats.getArmorLevel();
 
         if(stats.getSpeedLevel() == 1) {
-            rotationSpeed = 4000.0f;
+            rotationSpeed = 6000.0f;
         }
         else if(speedLevel == 2) {
-            rotationSpeed = 6000.0f;
+            rotationSpeed = 8000.0f;
         }
         if(digestionLevel == 1) {
             maxBiomassCost = 10.0f;

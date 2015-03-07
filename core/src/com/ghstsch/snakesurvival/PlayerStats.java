@@ -6,12 +6,12 @@ package com.ghstsch.snakesurvival;
 public class PlayerStats {
     public static final int MISSING = 0;
 
-    int speedLevel;
-    int digestionLevel;
-    int poisonLevel;
-    int armorLevel;
+    private int speedLevel;
+    private int digestionLevel;
+    private int poisonLevel;
+    private int armorLevel;
 
-    float biomass;
+    private float biomass;
 
     public PlayerStats() {
         speedLevel = 1;

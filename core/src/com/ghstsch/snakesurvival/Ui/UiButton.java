@@ -12,17 +12,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class UiButton extends UiElement {
     public static final int standard = 1;
 
-    boolean wasPressed;
-    static Texture texture_standard = new Texture(Gdx.files.internal("ui/button_1.png"));
-    static Texture texture_standard_pressed = new Texture(Gdx.files.internal("ui/button_1_pressed.png"));
-    float width;
-    float height;
-    CharSequence text;
-    int type;
+    private boolean wasPressed;
+    private static Texture texture_standard = new Texture(Gdx.files.internal("ui/button_1.png"));
+    private static Texture texture_standard_pressed = new Texture(Gdx.files.internal("ui/button_1_pressed.png"));
+    private float width;
+    private float height;
+    private CharSequence text;
+    private int type;
 
-    Color textColor;
-    Texture texture;
-    Texture texture_pressed;
+    private Color textColor;
+    private Texture texture;
+    private Texture texture_pressed;
+
     public UiButton(float x, float y, float width, float height, CharSequence text, int type, Color color, Color textColor, BitmapFont font) {
         super(x, y, color, font);
         wasPressed = false;
@@ -37,6 +38,7 @@ public class UiButton extends UiElement {
         }
     }
 
+    @Override
     public  void drawElement(SpriteBatch batch) {
        // if(type == standard) {
             if(wasPressed) batch.draw(texture_pressed, x, y, width, height);
@@ -44,7 +46,7 @@ public class UiButton extends UiElement {
         //}
         font.setScale(1.0f);
         float charSize = font.getCapHeight();
-        float charScale = height / charSize / 1.3f;
+        float charScale = height / charSize / 1.6f;
 
         font.setScale(charScale, charScale);
 
@@ -66,14 +68,14 @@ public class UiButton extends UiElement {
         }
         else return false;
     }
-    void changeTextures(Texture texture, Texture texture_pressed) {
+    public void changeTextures(Texture texture, Texture texture_pressed) {
         this.texture = texture;
         this.texture_pressed = texture_standard_pressed;
     }
-    CharSequence getText() {
+    public CharSequence getText() {
         return text;
     }
-    void setText(CharSequence text) {
+    public void setText(CharSequence text) {
         this.text = text;
     }
 }

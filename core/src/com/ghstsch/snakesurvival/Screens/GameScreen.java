@@ -1,14 +1,17 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.ghstsch.snakesurvival.InputHandler;
+import com.ghstsch.snakesurvival.ResourseManager;
 import com.ghstsch.snakesurvival.Ui.UiButton;
 import com.ghstsch.snakesurvival.Ui.UiElement;
 import com.ghstsch.snakesurvival.Ui.UiLabel;
 import com.ghstsch.snakesurvival.Ui.UiProcessor;
+import com.ghstsch.snakesurvival.Worlds.WorldController;
 
 import java.util.Vector;
 
@@ -18,23 +21,23 @@ import java.util.Vector;
 public class GameScreen extends Screen {
     public static final int FOREST_WORLD = 1;
 
-    Vector<UiElement> ingameUi;
-    Vector<UiElement> pauseUi;
+    private Vector<UiElement> ingameUi;
+    private Vector<UiElement> pauseUi;
 
-    UiButton pauseButton;
-    UiButton continueGameButton;
-    UiButton backToMenuButton;
+    private UiButton pauseButton;
+    private UiButton continueGameButton;
+    private UiButton backToMenuButton;
 
-    UiLabel biomassIndicator;
+    private UiLabel biomassIndicator;
 
-    UiProcessor uiProcessor;
+    private UiProcessor uiProcessor;
 
-    OrthographicCamera worldCam;
-    OrthographicCamera uiCam;
+    private OrthographicCamera worldCam;
+    private OrthographicCamera uiCam;
 
-    SpriteBatch spriteBatch;
-    WorldController controller;
-    Box2DDebugRenderer b2render;
+    private SpriteBatch spriteBatch;
+    private WorldController controller;
+    private Box2DDebugRenderer b2render;
 
     public GameScreen(ScreenManager screenManager, ResourseManager resourseManager) {
         super(screenManager, resourseManager);
@@ -49,8 +52,8 @@ public class GameScreen extends Screen {
         pauseUi = new Vector<UiElement>();
 
         pauseButton = new UiButton(
-                1750.0f, 0.0f,
-                170.0f, 50.0f,
+                1700.0f, 0.0f,
+                220.0f, 100.0f,
                 "PAUSE", UiButton.standard,
                 resourseManager.getUiColor(),
                 resourseManager.getUiTextColor(),
@@ -72,7 +75,7 @@ public class GameScreen extends Screen {
                 resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));
 
-        biomassIndicator = new UiLabel("BIOMASS:", 0.3f,
+        biomassIndicator = new UiLabel("BIOMASS:", 0.5f,
                 30.0f, 30.0f,
                 resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));

@@ -1,18 +1,14 @@
-package com.ghstsch.snakesurvival;
+package com.ghstsch.snakesurvival.Worlds;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-
-import java.util.Vector;
+import com.ghstsch.snakesurvival.Objects.DayFinisher;
+import com.ghstsch.snakesurvival.Objects.Fruit;
+import com.ghstsch.snakesurvival.Objects.Player;
 
 /**
  * Created by aaaa on 04.03.2015.
  */
 public class ForestWorldController extends WorldController {
-    ForestWorldController() {
+    public ForestWorldController() {
         super();
         finalDay = 3;
     }
