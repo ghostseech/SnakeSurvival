@@ -43,7 +43,6 @@ public class MenuScreen implements Screen {
         worldSelectionScreen = new Vector<UiElement>();
         worldSelectionScreen.add(new UiLabel("SNAKE SURVIVAL", 1.0f, 100.0f, 100.0f, new Color(1.0f, 0.0f, 0.0f, 1.0f), font));
         worldSelectionScreen.add(new UiButton(200.0f, 300.0f, 800.0f, 100.0f, "FOREST", UiButton.standard, new Color(1.0f, 0.5f, 0.0f, 1.0f), new Color(0.4f, 1.0f, 1.0f, 1.0f), font));
-        System.out.println(worldSelectionScreen);
     }
     public void draw() {
         cam.update();

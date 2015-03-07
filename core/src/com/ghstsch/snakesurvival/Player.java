@@ -23,6 +23,15 @@ public class Player implements GameObject {
     float snakeSpeed;
     float rotationSpeed;
     boolean dead;
+
+    float biomass;
+
+    float maxBiomassCost;
+
+    int speedLevel;
+    int digestionLevel;
+    int fireLevel;
+
     Player(float x, float y, float angle, World world) {
         this.world = world;
 
@@ -37,6 +46,8 @@ public class Player implements GameObject {
         right = false;
         left = false;
         dead = false;
+        biomass = 0.0f;
+        setup(1, 1, 0);
     }
     public void moveForward() {
 
@@ -72,6 +83,14 @@ public class Player implements GameObject {
 
         right = false;
         left = false;
+
+        int segmentsDelta = 3 + (int)(biomass/100.0f) - segmentList.size();
+        if(segmentsDelta >= 1) {
+            addSegments(segmentsDelta);
+        }
+        if(segmentsDelta <= -1) {
+            removeSegments(segmentsDelta);
+        }
     }
     void addSegments(int count) {
         for(int i = 0; i < count; i++) {
@@ -87,7 +106,7 @@ public class Player implements GameObject {
     }
     void removeSegments(int count) {
         for(int i = 0; i < count; i++) {
-            if(segmentList.size() >= 3) {
+            if(segmentList.size() > 3) {
                 segmentList.getLast().dispose();
                 segmentList.remove(segmentList.getLast());
             }
@@ -95,7 +114,8 @@ public class Player implements GameObject {
     }
     void resolveCollision(Filter f, SnakeSegment segment) {
         if(f.categoryBits == Fruit.collisionCategory && segment == getHead()) {
-            addSegments(1);
+            //removeSegments(1);
+            biomass += 10.0f;
         }
     }
     SnakeSegment getSegment(int id) {
@@ -117,5 +137,38 @@ public class Player implements GameObject {
         return dead;
     }
     public void dispose() {
+        for(int i = 0; i < segmentList.size(); i++)segmentList.get(i).dispose();
+    }
+    float getBiomass() {
+        return biomass;
+    }
+    void setBiomass(float biomass) {
+        this.biomass = biomass;
+    }
+    void setSpeed(float speed) {
+        snakeSpeed = speed;
+    }
+    void setup(int speedLevel, int digestionLevel, int fireLevel) {
+        this.speedLevel = speedLevel;
+        this.digestionLevel = digestionLevel;
+        this.fireLevel = fireLevel;
+        if(speedLevel == 1) {
+            rotationSpeed = 4000.0f;
+        }
+        else if(speedLevel == 2) {
+            rotationSpeed = 6000.0f;
+        }
+        if(digestionLevel == 1) {
+            maxBiomassCost = 10.0f;
+        }
+        else if(digestionLevel == 2) {
+            maxBiomassCost = 20.0f;
+        }
+        if(fireLevel == 1) {
+
+        }
+        else if(fireLevel == 2) {
+
+        }
     }
 }

@@ -41,4 +41,7 @@ public abstract class WorldController {
     void endGame() {
         ended = true;
     }
+    void continueGame() {
+        ended = false;
+    }
 }

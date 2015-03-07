@@ -16,10 +16,12 @@ public class Fruit extends PhysicalObject{
     public static Texture appleTexture;// = (Gdx.files.internal(""))
     Texture texture;
     boolean dead;
+    float biomass;
     Fruit(int type, float x, float y, float angle, World world) {
         super(x, y, angle, world);
         if(type == APPLE) {
             texture = appleTexture;
+            biomass = 10.0f;
         }
         dead = false;
     }
@@ -64,5 +66,8 @@ public class Fruit extends PhysicalObject{
     }
     public void dispose() {
         world.destroyBody(body);
+    }
+    float getBiomass() {
+        return biomass;
     }
 }

@@ -20,4 +20,7 @@ public class UiLabel extends UiElement {
         font.setScale(size);
         font.draw(batch, text, x, y);
     }
+    void setText(CharSequence text) {
+        this.text = text;
+    }
 }

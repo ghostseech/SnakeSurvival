@@ -14,13 +14,7 @@ public class ForestWorldController extends WorldController {
     ForestWorldController(World world) {
         super(world);
         finalDay = 3;
-        fruits = new Vector<Fruit>();
     }
-    Vector<Fruit> fruits;
-    public Player getPlayer() {
-        return player;
-    }
-
     public void update(float dt) {
         for(int i = 0; i < objectList.size(); i++) {
             if(objectList.get(i).isDead()) {
@@ -42,16 +36,23 @@ public class ForestWorldController extends WorldController {
         for(int i = 0; i < objectList.size(); i++) objectList.get(i).update(dt);
     }
     public void generateWorld(int day) {
+        for(int i = 0; i < objectList.size(); i++)objectList.get(i).dispose();
+        objectList.clear();
+
         this.day = day;
+        System.out.println(day);
         player = new Player(400.0f, 400.0f, 0.0f, world);
         objectList.add(player);
-        fruits.add(new Fruit(Fruit.APPLE, 100.0f, 100.0f, 30.0f, world));
-        fruits.add(new Fruit(Fruit.APPLE, 300.0f, 100.0f, 30.0f, world));
-        fruits.add(new Fruit(Fruit.APPLE, 200.0f, 200.0f, 30.0f, world));
-        objectList.add(fruits.get(0));
-        objectList.add(fruits.get(1));
-        objectList.add(fruits.get(2));
+        objectList.add(new Fruit(Fruit.APPLE, 100.0f, 100.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 300.0f, 100.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 200.0f, 200.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 100.0f, 200.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 800.0f, 800.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 900.0f, 900.0f, 30.0f, world));
+        objectList.add(new Fruit(Fruit.APPLE, 800.0f, 200.0f, 30.0f, world));
+        if(day == 2) objectList.add(new Fruit(Fruit.APPLE, 900.0f, 900.0f, 30.0f, world));
         objectList.add(new DayFinisher(700.0f, 700.0f, 0.0f, world, this));
+        ended = false;
     }
     public void addObject() {
 
