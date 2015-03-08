@@ -1,11 +1,13 @@
 package com.ghstsch.snakesurvival.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.ghstsch.snakesurvival.InputHandler;
+import com.ghstsch.snakesurvival.Objects.GameObject;
 import com.ghstsch.snakesurvival.ResourseManager;
 import com.ghstsch.snakesurvival.Ui.UiButton;
 import com.ghstsch.snakesurvival.Ui.UiElement;
@@ -91,7 +93,7 @@ public class GameScreen extends Screen {
         uiProcessor.setUi(ingameUi);
 
         worldCam = new OrthographicCamera();
-        worldCam.setToOrtho(true, 1920, 1080);
+        worldCam.setToOrtho(true, 80, 45);
         uiCam = new OrthographicCamera();
         uiCam.setToOrtho(true, 1920, 1080);
 
@@ -100,6 +102,7 @@ public class GameScreen extends Screen {
 
         controller = resourseManager.getCurrentController();
         b2render = new Box2DDebugRenderer(true,true,false,true,false,true);
+        //b2render = new Box2DDebugRenderer(true,true,true,true,true,true);
     }
 
     @Override
@@ -110,15 +113,20 @@ public class GameScreen extends Screen {
 
         worldCam.position.x = controller.getPlayer().getPosition().x;
         worldCam.position.y = controller.getPlayer().getPosition().y;
-
         worldCam.update();
-
-        b2render.render(controller.getWorld(), worldCam.combined);
-
+        spriteBatch.setProjectionMatrix(worldCam.combined);
+        spriteBatch.begin();
+        spriteBatch.setColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
         //Vector<GameObject> objectList = controller.getObjectList();
         //for(int i = 0; i < objectList.size(); i++) objectList.get(i).draw(spriteBatch);
 
+        spriteBatch.end();
+
+        b2render.render(controller.getWorld(), worldCam.combined);
+
+
         uiCam.update();
+        spriteBatch.setProjectionMatrix(uiCam.combined);
         spriteBatch.begin();
         uiProcessor.draw(spriteBatch);
         spriteBatch.end();
@@ -161,6 +169,7 @@ public class GameScreen extends Screen {
 
         if(InputHandler.isKeyDown(InputHandler.D))controller.getPlayer().turnRight();
         if(InputHandler.isKeyDown(InputHandler.A))controller.getPlayer().turnLeft();
+        if(InputHandler.isKeyDown(InputHandler.SPACE))controller.getPlayer().fire();
         if(Gdx.input.isTouched()) {
             if(Gdx.input.getX() > Gdx.graphics.getWidth()/2)controller.getPlayer().turnRight();
             else controller.getPlayer().turnLeft();

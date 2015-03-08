@@ -153,7 +153,7 @@ public class UpdateScreen extends Screen {
         armor.setText    ("ARMOR    :" + stats.getArmorLevel());
         poison.setText   ("POISON   :" + stats.getPoisonLevel());
 
-        biomassIndicator.setText("SPEED    :" + stats.getBiomass());
+        biomassIndicator.setText("BIOMASS:" + stats.getBiomass());
 
         Vector<UiButton> clickedList = uiProcessor.getClickedButtonList();
         for(int i = 0; i < clickedList.size(); i++) {

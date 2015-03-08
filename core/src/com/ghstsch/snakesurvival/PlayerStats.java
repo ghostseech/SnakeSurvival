@@ -23,7 +23,7 @@ public class PlayerStats {
 
     public float getStatCost(int level) {
         float cost = level * 100.0f;
-        if(level == 0) cost = 400.0f;
+        //if(level == 0) cost = 400.0f;
         return cost;
     }
 

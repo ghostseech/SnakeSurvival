@@ -13,7 +13,6 @@ public abstract class PhysicalObject implements GameObject {
 
     public PhysicalObject(float x, float y, float angle, World world) {
         this.world = world;
-        createShape(x, y, angle);
     }
 
     public abstract void createShape(float x, float y, float angle);

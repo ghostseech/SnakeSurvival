@@ -1,5 +1,6 @@
 package com.ghstsch.snakesurvival.Worlds;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
@@ -26,6 +27,7 @@ public abstract class WorldController {
         ended = false;
 
         world = new World(new Vector2(0, 0), true);
+
         objectList = new Vector<GameObject>();
         generateWorld(1);
     }
@@ -37,11 +39,15 @@ public abstract class WorldController {
     protected void resolveCollisions() {
         Array<Contact> contactArray = world.getContactList();
         for(int i = 0; i < world.getContactList().size; i++) {
-            PhysicalObject objectA = (PhysicalObject)contactArray.get(i).getFixtureA().getBody().getUserData();
-            PhysicalObject objectB = (PhysicalObject)contactArray.get(i).getFixtureB().getBody().getUserData();
+            if(contactArray.get(i).isTouching()) {
+                PhysicalObject objectA = (PhysicalObject)contactArray.get(i).getFixtureA().getBody().getUserData();
+                PhysicalObject objectB = (PhysicalObject)contactArray.get(i).getFixtureB().getBody().getUserData();
 
-            objectA.resolveCollision(objectB);
-            objectB.resolveCollision(objectA);
+                objectA.resolveCollision(objectB);
+                objectB.resolveCollision(objectA);
+                contactArray.get(i).setEnabled(false);
+                contactArray.get(i).resetFriction();
+            }
         }
     }
 

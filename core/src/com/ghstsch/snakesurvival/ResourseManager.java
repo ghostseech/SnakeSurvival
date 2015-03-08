@@ -23,7 +23,8 @@ public class ResourseManager {
         uiColor = new Color(0.1f, 0.6f, 0.8f, 1.0f);
         uiTextColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
         uiLabelColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        fonts.add(new BitmapFont(Gdx.files.internal("fonts/font_8.fnt"), Gdx.files.internal("fonts/font_8_0.png"), true));
+        fonts.add(new BitmapFont(Gdx.files.internal("fonts/font_8.fnt"), Gdx.files.internal("fonts/font_8_0.png"), true, true));
+
         playerStats = new PlayerStats();
     }
 
@@ -31,17 +32,14 @@ public class ResourseManager {
         currentController = controller;
     }
     public PlayerStats getPlayerStats() {
-        System.out.println(playerStats + "otdano");
         return playerStats;
     }
     public void setPlayerStats(PlayerStats stats) {
-        //playerStats = stats;
         playerStats.setArmorLevel(stats.getArmorLevel());
         playerStats.setPoisonLevel(stats.getPoisonLevel());
         playerStats.setDigestionLevel(stats.getDigestionLevel());
         playerStats.setSpeedLevel(stats.getSpeedLevel());
         playerStats.setBiomass(stats.getBiomass());
-        System.out.println(playerStats + "sdelano");
     }
     public WorldController getCurrentController() {
         return currentController;
