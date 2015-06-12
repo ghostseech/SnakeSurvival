@@ -160,7 +160,7 @@ public class GameScreen extends Screen {
     public void handleInput()
     {
         uiProcessor.update();
-
+//
         Vector<UiButton> clickedList = uiProcessor.getClickedButtonList();
 
         for(int i = 0; i < clickedList.size(); i++) {
