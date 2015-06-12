@@ -31,6 +31,7 @@ public class GameScreen extends Screen {
     private UiButton backToMenuButton;
 
     private UiLabel biomassIndicator;
+    private UiLabel healthIndicator;
 
     private UiProcessor uiProcessor;
 
@@ -82,13 +83,20 @@ public class GameScreen extends Screen {
                 resourseManager.getUiTextColor(),
                 resourseManager.getFont(0));
 
+        healthIndicator = new UiLabel("HEALTH:", 0.5f,
+                600.0f, 30.0f,
+                resourseManager.getUiTextColor(),
+                resourseManager.getFont(0));
+
         ingameUi.add(pauseButton);
         ingameUi.add(biomassIndicator);
+        ingameUi.add(healthIndicator);
 
         pauseUi.add(pauseButton);
         pauseUi.add(continueGameButton);
         pauseUi.add(backToMenuButton);
         pauseUi.add(biomassIndicator);
+        pauseUi.add(healthIndicator);
 
         uiProcessor.setUi(ingameUi);
 
@@ -145,6 +153,7 @@ public class GameScreen extends Screen {
         }
 
         biomassIndicator.setText("BIOMASS:" + (int)controller.getPlayer().getStats().getBiomass());
+        healthIndicator.setText("HEALTH:" + (int)controller.getPlayer().getHealth());
     }
 
     @Override
@@ -167,8 +176,11 @@ public class GameScreen extends Screen {
             }
         }
 
-        if(InputHandler.isKeyDown(InputHandler.D))controller.getPlayer().turnRight();
-        if(InputHandler.isKeyDown(InputHandler.A))controller.getPlayer().turnLeft();
+        if(InputHandler.isKeyDown(InputHandler.W))controller.getPlayer().setDir(1);
+        if(InputHandler.isKeyDown(InputHandler.D))controller.getPlayer().setDir(2);
+        if(InputHandler.isKeyDown(InputHandler.S))controller.getPlayer().setDir(3);
+        if(InputHandler.isKeyDown(InputHandler.A))controller.getPlayer().setDir(4);
+
         if(InputHandler.isKeyDown(InputHandler.SPACE))controller.getPlayer().fire();
         if(Gdx.input.isTouched()) {
             if(Gdx.input.getX() > Gdx.graphics.getWidth()/2)controller.getPlayer().turnRight();

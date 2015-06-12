@@ -47,8 +47,8 @@ public class Stone extends PhysicalObject {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.7f;
-        fixtureDef.friction = 4.7f;
-        fixtureDef.restitution = 4.7f;
+        fixtureDef.friction = 5.7f;
+        fixtureDef.restitution = 5.7f;
 
         Fixture fixture = body.createFixture(fixtureDef);
         shape.dispose();

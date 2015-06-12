@@ -1,11 +1,9 @@
 package com.ghstsch.snakesurvival.Worlds;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.utils.Array;
 import com.ghstsch.snakesurvival.Objects.*;
+
+import java.util.Vector;
 
 /**
  * Created by aaaa on 04.03.2015.
@@ -35,15 +33,15 @@ public class ForestWorldController extends WorldController {
 
     private void generateWroldBorder() {
         for(int i = 0; i < 100; i++) {
-            float x = MathUtils.cos(360.0f / 100.0f * i * 0.017f) * 250.0f;
-            float y = MathUtils.sin(360.0f / 100.0f * i * 0.017f) * 250.0f;
+            float x = MathUtils.cos(360.0f / 100.0f * i * 0.017f) * 125.0f;
+            float y = MathUtils.sin(360.0f / 100.0f * i * 0.017f) * 125.0f;
             objectList.add(new Stone(x, y, 0, world, 30.0f, 50.0f));
         }
     }
 
     private void generateApples(int count) {
         for(int i = 0; i < count; i++) {
-            float offset = MathUtils.random(0.0f, 250.0f);
+            float offset = MathUtils.random(0.0f, 125.0f);
 
             float x = MathUtils.cos(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
             float y = MathUtils.sin(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
@@ -54,7 +52,7 @@ public class ForestWorldController extends WorldController {
 
     private void generateBananas(int count) {
         for(int i = 0; i < count; i++) {
-            float offset = MathUtils.random(0.0f, 250.0f);
+            float offset = MathUtils.random(0.0f, 125.0f);
 
             float x = MathUtils.cos(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
             float y = MathUtils.sin(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
@@ -65,7 +63,7 @@ public class ForestWorldController extends WorldController {
 
     private void generateOranges(int count) {
        for(int i = 0; i < count; i++) {
-            float offset = MathUtils.random(0.0f, 250.0f);
+            float offset = MathUtils.random(0.0f, 125.0f);
 
             float x = MathUtils.cos(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
             float y = MathUtils.sin(MathUtils.random(0.0f, 3.1417f * 2)) * offset;
@@ -74,10 +72,23 @@ public class ForestWorldController extends WorldController {
         }
     }
 
+    private void generateForestZone(float x, float y, float density, float size) {
+        Vector<Tree> tmplist = new Vector<Tree>();
+
+        int treecount = (int)MathUtils.random((size * size) / (5 * 5 * density) / 5, (size * size) / (5 * 5 * density)) / 2;
+        for(int i = 0; i < treecount; i++) {
+            float xpos = MathUtils.random(x, x + size);
+            float ypos = MathUtils.random(y, y + size);
+
+            float angle = MathUtils.random(0.0f, 360.0f) * MathUtils.degreesToRadians;
+            tmplist.add(new Tree(xpos, ypos, angle,MathUtils.random(3.0f, 5.0f), world));
+        }
+    }
+
     private void generateForest() {
-        for(float i = -250.0f; i < 250.0f; i+= MathUtils.random(15.0f, 90.0f)) {
-            for(float j = -250.0f; j < 250.0f; j+= MathUtils.random(15.0f, 90.0f)) {
-                objectList.add(new Tree(i, j, 0, MathUtils.random(3.0f, 5.0f), world));
+        for(float i = -125.0f; i < 125.0f; i+= MathUtils.random(10.0f, 50.0f)) {
+            for(float j = -125.0f; j < 125.0f; j+= MathUtils.random(10.0f, 50.0f)) {
+                objectList.add(new Tree(i + MathUtils.random(-20.0f, 20.0f), j + MathUtils.random(-20.0f, 20.0f), MathUtils.random(0.0f, MathUtils.PI * MathUtils.PI), MathUtils.random(3.0f, 5.0f), world));
             }
         }
     }
@@ -93,8 +104,10 @@ public class ForestWorldController extends WorldController {
         //objectList.add(new Ground(0.0f, 0.0f, 0.0f, world, 2500.0f, 2500.0f));
         //objectList.add(new Ground(5000.0f,5000.0f));
         objectList.add(player);
+        objectList.add(new Bug(20.0f, 20.0f, 30.0f, world, player));
+        //objectList.add(new Bug(20.0f, 20.0f, 30.0f, world, player));
         //objectList.add(new Fruit(Fruit.APPLE, 3.0f, 3.0f, 0.0f, world));
-      //  objectList.add(new Fruit(Fruit.APPLE, 15.0f, 15.0f, 30.0f, world));
+        //objectList.add(new Fruit(Fruit.APPLE, 15.0f, 15.0f, 30.0f, world));
         /*objectList.add(new Fruit(Fruit.APPLE, 300.0f, 100.0f, 30.0f, world));
         objectList.add(new Fruit(Fruit.APPLE, 200.0f, 200.0f, 30.0f, world));
         objectList.add(new Fruit(Fruit.APPLE, 100.0f, 200.0f, 30.0f, world));
@@ -105,6 +118,7 @@ public class ForestWorldController extends WorldController {
         objectList.add(new Stone(1000.0f, 1000.0f, 0.0f, world, 60.0f, 80.0f));
         objectList.add(new Stone(1000.0f, 600.0f, 0.0f, world, 60.0f, 80.0f));*/
         generateWroldBorder();
+        //generateForestZone(10.0f, 10.0f, 4.0f, 50.0f);
         generateForest();
         if(day == 1) {
             generateApples(40);

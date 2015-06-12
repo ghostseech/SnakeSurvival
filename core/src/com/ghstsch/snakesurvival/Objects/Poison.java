@@ -26,10 +26,10 @@ public class Poison extends  PhysicalObject {
         dead = false;
     }
 
-
     @Override
     public void update(float dt) {
-        body.applyLinearImpulse(new Vector2(dirX * speed, dirY * speed), getPosition(), true);
+        body.setLinearVelocity(dirX * speed * 50.0f, dirY * speed * 50.0f);
+        //body.applyLinearImpulse(new Vector2(dirX * speed / 4, dirY * speed / 4), getPosition(), true);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Poison extends  PhysicalObject {
 
     @Override
     public void resolveCollision(PhysicalObject object) {
-        //dead = true;
+        dead = true;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Poison extends  PhysicalObject {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bodyDef);
-        body.setBullet(true);
+        //body.setBullet(true);
         CircleShape shape = new CircleShape();
         shape.setRadius(radius);
 

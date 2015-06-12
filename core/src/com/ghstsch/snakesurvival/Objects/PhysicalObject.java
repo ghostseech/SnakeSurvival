@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public abstract class PhysicalObject implements GameObject {
     protected Body body;
     protected World world;
+    //public final short
 
     public PhysicalObject(float x, float y, float angle, World world) {
         this.world = world;

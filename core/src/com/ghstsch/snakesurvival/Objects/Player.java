@@ -22,9 +22,20 @@ public class Player implements GameObject {
     private Vector<Poison> poisonList;
 
     private World world;
+
+
+    private int dir;
+    private boolean go;
+
     private boolean left;
     private boolean right;
+    private boolean up;
+    private boolean down;
+
     private boolean dead;
+
+    private float health;
+    private float blockDamage;
 
     private float snakeSpeed;
     private float rotationSpeed;
@@ -37,6 +48,9 @@ public class Player implements GameObject {
 
     private float fireTime;
     private float fireTimer;
+
+    private float damageTime;
+    private float damageTimer;
 
     public Player(float x, float y, float angle, World world) {
         this.world = world;
@@ -62,6 +76,12 @@ public class Player implements GameObject {
 
         fireTime = 1.0f;
         fireTimer = 0.0f;
+
+        damageTime = 0.5f;
+        damageTimer = 0.0f;
+
+        dir = 1;
+        go = true;
     }
 
     @Override
@@ -73,33 +93,55 @@ public class Player implements GameObject {
 
     @Override
     public void update(float dt) {
-        float impulseDirX = -snakeSpeed * MathUtils.cos(getAngle() + 0.5f * 3.1417f);
-        float impulseDirY = -snakeSpeed * MathUtils.sin(getAngle() + 0.5f * 3.1417f);
-        getHead().getBody().applyLinearImpulse(impulseDirX, impulseDirY, getPosition().x, getPosition().y, true);
-        if(right) {
-            float rotationDirX = MathUtils.cos(getAngle()) * rotationSpeed;
-            float rotationDirY = MathUtils.sin(getAngle()) * rotationSpeed;
-            float xoffset = - MathUtils.cos(getAngle()) * segmentSize/2;
-            float yoffset = - MathUtils.sin(getAngle()) * segmentSize/2;
-            getHead().getBody().applyTorque(60.0f, true);
+        if(dir == 1) {
+            getHead().getBody().setTransform(getHead().getPosition(), 0.0f);
+        }
+        else if(dir == 2) {
+            getHead().getBody().setTransform(getHead().getPosition(), 90.0f);
+        }
+        else if(dir == 3) {
+            getHead().getBody().setTransform(getHead().getPosition(), 180.0f);
+        }
+        else if(dir == 4) {
+            getHead().getBody().setTransform(getHead().getPosition(), -90.0f);
+        }
+
+        if(go) {
+            float impulseDirX = -snakeSpeed * MathUtils.cos(getAngle() + 0.5f * 3.1417f);
+            float impulseDirY = -snakeSpeed * MathUtils.sin(getAngle() + 0.5f * 3.1417f);
+            getHead().getBody().applyLinearImpulse(impulseDirX, impulseDirY, getPosition().x, getPosition().y, true);
+        }
+
+      //  if(right) {
+            //getHead().getBody().setTransform(getHead().getBody().getPosition(), -45);
+            //float rotationDirX = MathUtils.cos(getAngle()) * rotationSpeed;
+            //float rotationDirY = MathUtils.sin(getAngle()) * rotationSpeed;
+            //float xoffset = - MathUtils.cos(getAngle()) * segmentSize/2;
+            //float yoffset = - MathUtils.sin(getAngle()) * segmentSize/2;
+            //getHead().getBody().applyTorque(100.0f * rotationSpeed, true);
            // getHead().getBody().applyLinearImpulse(rotationDirX, rotationDirY, getPosition().x + xoffset, getPosition().y + yoffset, true);
-        }
-        else if(left) {
-            float rotationDirX = -MathUtils.cos(getAngle()) * rotationSpeed;
-            float rotationDirY = -MathUtils.sin(getAngle()) * rotationSpeed;
-            float xoffset = - MathUtils.cos(getAngle()) * segmentSize/2;
-            float yoffset = - MathUtils.sin(getAngle()) * segmentSize/2;
-            getHead().getBody().applyTorque(-60.0f, true);
+        //}
+        //else if(left) {
+           // getHead().getBody().setTransform(getHead().getBody().getPosition(), 135.0f);
+            //float rotationDirX = -MathUtils.cos(getAngle()) * rotationSpeed;
+           // float rotationDirY = -MathUtils.sin(getAngle()) * rotationSpeed;
+           // float xoffset = - MathUtils.cos(getAngle()) * segmentSize/2;
+           // float yoffset = - MathUtils.sin(getAngle()) * segmentSize/2;
+           // getHead().getBody().applyTorque(-100.0f * rotationSpeed, true);
             //getHead().getBody().applyLinearImpulse(rotationDirX, rotationDirY, getPosition().x + xoffset, getPosition().y + yoffset, true);
-        }
+        //}
+
 
         right = false;
         left = false;
 
         if(fireTimer >= 0.0f) fireTimer -= dt;
+        if(damageTimer >= 0.0f) damageTimer -= dt;
+
         for(int i = 0; i < poisonList.size(); i++) {
             poisonList.get(i).update(dt);
         }
+
         int segmentsDelta = 3 + (int)(stats.getBiomass()/100.0f) - segmentList.size();
         if(segmentsDelta >= 1) {
             addSegments(segmentsDelta);
@@ -107,6 +149,13 @@ public class Player implements GameObject {
         if(segmentsDelta <= -1) {
             removeSegments(segmentsDelta);
         }
+
+        for(int i = 0; i < poisonList.size(); i++)
+            if(poisonList.get(i).isDead()) {
+                poisonList.get(i).dispose();
+                poisonList.remove(i);
+                i--;
+            }
     }
 
     @Override
@@ -117,6 +166,10 @@ public class Player implements GameObject {
     @Override
     public void dispose() {
         for(int i = 0; i < segmentList.size(); i++)segmentList.get(i).dispose();
+    }
+
+    public void setDir(int dir) {
+        this.dir = dir;
     }
 
     public void turnRight() {
@@ -139,6 +192,10 @@ public class Player implements GameObject {
             poisonList.add(new Poison(poisonDamage, dirX, dirY, poisonSpeed, xcoord, ycoord, 0.0f, world));
             fireTimer = fireTime;
         }
+    }
+
+    public Vector<Poison> getPoisonList() {
+        return poisonList;
     }
 
     public void addSegments(int count) {
@@ -167,6 +224,20 @@ public class Player implements GameObject {
         if(object.getClass() == Fruit.class && segment == getHead()) {
             stats.addBiomass(((Fruit)object).getBiomass());
         }
+        if(object.getClass() == Stone.class) {
+            damage(20.0f);
+        }
+    }
+
+    public void damage(float val) {
+        if(damageTimer <= 0.0f) {
+            damageTimer = damageTime;
+            health -= (val - blockDamage);
+        }
+    }
+
+    public float getHealth() {
+        return health;
     }
 
     public SnakeSegment getSegment(int id) {
@@ -214,12 +285,16 @@ public class Player implements GameObject {
         int poisonLevel = stats.getPoisonLevel();
         int armorLevel = stats.getArmorLevel();
 
+        health = 100.0f;
+        blockDamage = 0.0f;
 
         if(stats.getSpeedLevel() == 1) {
             rotationSpeed = 0.5f;
+            snakeSpeed = 0.6f;
         }
         else if(speedLevel == 2) {
             rotationSpeed = 0.6f;
+            snakeSpeed = 0.8f;
         }
         if(digestionLevel == 1) {
             maxBiomassCost = 10.0f;
@@ -232,14 +307,17 @@ public class Player implements GameObject {
             poisonSpeed = 0.3f;
         }
         else if(poisonLevel == 2) {
-
+            poisonDamage = 30.0f;
+            poisonSpeed = 0.3f;
         }
         if(armorLevel == 1) {
-
+            health = 120.0f;
+            blockDamage = 5.0f;
         }
         else if(armorLevel == 2)
         {
-
+            health = 140.0f;
+            blockDamage = 10.0f;
         }
     }
 }
